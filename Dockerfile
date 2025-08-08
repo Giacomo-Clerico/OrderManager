@@ -40,6 +40,7 @@ COPY Gemfile Gemfile.lock vendor ./
 
 RUN gem install bundler && \
     mkdir -p $BUNDLE_PATH && \
+    bundle config set --global git_clone_options "" && \
     bundle install
 
 #RUN bundle install && \

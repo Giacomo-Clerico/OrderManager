@@ -1,0 +1,17 @@
+<h1>Create New User</h1>
+
+<%= form_for @user do |f| %>
+    <div>
+        <%= f.label :email %><br>
+        <%= f.email_field :email, required: true %>
+    </div>
+
+    <div>
+        <%= f.label :user_type %><br>
+        <%= f.select :user_type, User::USER_TYPES.map { |type| [type.titleize, type] }, prompt: "Select user type", required: true %>
+    </div>
+
+    <div>
+        <%= f.submit "Create User" %>
+    </div>
+<% end %>
