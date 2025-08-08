@@ -16,7 +16,7 @@ services:
 
   web:
     build: .
-    command: "./bin/rails server"
+    command: bash -c "bundle exec rails tailwindcss:build && ./bin/rails server"
     environment:
       - RAILS_ENV=${RAILS_ENV}
       - POSTGRES_HOST=${POSTGRES_HOST}
