@@ -1,0 +1,61 @@
+<h1 class="font-bold text-xl">Quote Details</h1>
+
+<p>
+    <strong>Order:</strong>
+    <%= link_to @order.name, @order %>
+</p>
+
+<p>
+    <strong>Company:</strong>
+    <%= @quote.company %>
+</p>
+
+<p>
+    <strong>Company Address:</strong>
+    <%= @quote.company_address %>
+</p>
+
+<div>
+    <strong>Body:</strong>
+    <div class="border-1 border-black rounded-lg p-2 my-2 inline-block">
+        <%= @quote.body %>
+    </div>
+</div>
+
+<hr>
+
+<h2>Items:</h2>
+
+<% if @items.any? %>
+    <table class="table-auto border-collapse border border-gray-300">
+    <thead>
+        <tr>
+            <th class="border border-gray-300 px-2 py-1">Name</th>
+            <th class="border border-gray-300 px-2 py-1">Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @items.each do |item| %>
+            <tr>
+                <td class="border border-gray-300 px-2 py-1"><%= item.item_name %></td>
+                <td class="border border-gray-300 px-2 py-1"><%= number_to_currency(item.price) %></td>
+            </tr>
+        <% end %>
+    </tbody>
+    </table>
+<% else %>
+    <p>No items added yet.</p>
+<% end %>
+<%= form_with(model: Item.new, url: order_quote_items_path(@quote.order, @quote), local: true) do |f| %>
+    <div class="flex gap-2 mt-2">
+        <%= f.text_field :item_name, placeholder: "Item name", class: "border p-1 rounded" %>
+        <%= f.number_field :price, placeholder: "Price", class: "border p-1 rounded", min: 1 %>
+        <%= f.submit "Add", class: "bg-green-500 text-white px-2 rounded" %>
+    </div>
+<% end %>
+
+
+<div class="mt-4">
+    <%= link_to "Add Item", new_order_quote_item_path(@order, @quote), class: "bg-green-500 text-white px-3 py-1 rounded" %> |
+    <%= link_to "Back to Order", @order, class: "bg-gray-500 text-white px-3 py-1 rounded" %>
+</div>

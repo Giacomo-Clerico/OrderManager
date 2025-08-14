@@ -6,10 +6,19 @@ Rails.application.routes.draw do
 
   resources :users, only: [ :new, :create, :index ]
 
-  get "/orders/new", to: "orders#new", as: :new_order
-  get "/orders/:id", to: "orders#show", as: :order
-  post "/orders", to: "orders#create", as: :orders
-  patch "/orders/:id/check", to: "orders#check", as: :check_order
+  # get "/orders/new", to: "orders#new", as: :new_order
+  # get "/orders/:id", to: "orders#show", as: :order
+  # post "/orders", to: "orders#create", as: :orders
+  # patch "/orders/:id/check", to: "orders#check", as: :check_order
+
+  resources :orders do
+    member do
+      patch :check
+    end
+    resources :quotes do
+      resources :items
+    end
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

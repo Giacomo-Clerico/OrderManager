@@ -1,0 +1,17 @@
+<h1>Add New Item to Quote: <%= @quote.company %></h1>
+
+<%= form_with(model: @item, url: order_quote_items_path(@order, @quote)) do |form| %>
+    <div class="mb-4">
+        <%= form.label :item_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.text_field :item_name, class: "mt-1 block w-full border border-gray-300 rounded-md p-2" %>
+    </div>
+
+    <div class="mb-4">
+        <%= form.label :price, class: "block text-sm font-medium text-gray-700" %>
+        <%= form.number_field :price, class: "mt-1 block w-full border border-gray-300 rounded-md p-2", min: 1 %>
+    </div>
+
+    <%= form.submit "Save Item", class: "bg-green-500 text-white px-4 py-2 rounded" %>
+<% end %>
+
+<%= link_to "Back to Quote", [@order, @quote], class: "mt-4 inline-block bg-gray-500 text-white px-4 py-2 rounded" %>

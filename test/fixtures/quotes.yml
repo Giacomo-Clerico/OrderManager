@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  order: one
+  company: MyText
+  company_address: MyText
+  body: MyText
+  requested_by: one
+
+two:
+  order: two
+  company: MyText
+  company_address: MyText
+  body: MyText
+  requested_by: two

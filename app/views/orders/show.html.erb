@@ -1,14 +1,63 @@
 <% order = @order %>
-<div class="border-b border-gray-200 py-10">
+<div class="border-b border-gray-200 py-3">
+    <h2 class="text-xl font-bold"><%= order.name%></h2>
     <div class="flex items-center justify-start  gap-x-4">
-        <h2 class="text-lg font-semibold"><%= order.name%></h2>
-        <p>Created by: <%= order.user.email.split("@").first %></p>
-        <%= order.created_at.strftime("%d/%m/%Y %H:%M") %>
+        <p>Created by: <%= order.user.email.split("@").first %> at <%= order.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+        <% unless @order.checked_at.nil? %>
+            <p>Checked by: <%= @order.checked_by.email.split("@").first %> at <%= @order.checked_at.strftime("%d/%m/%Y %H:%M") %></p>
+        <% end %>
     </div>
     <%= order.description%>
     <% if @order.checked_at.nil? %>
-        <%= button_to "Check Order", check_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 rounded" %>
+        <%= button_to "Check Order", check_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
     <% else %>
-        <p>Checked by: <%= @order.checked_by.email.split("@").first %> at <%= @order.checked_at.strftime("%d/%m/%Y %H:%M") %></p>
+        <h1 class="font-semibold text-lg mt-6">Quote Details</h1>
+        <div class="flex flex-wrap gap-4 mt-4">
+            <% @order.quotes.each do |quote| %>
+            <div class="border border-gray-300 rounded-lg p-5">
+                <p>
+                    <strong>Company:</strong>
+                    <%= link_to quote.company, order_quote_path(@order, quote) %>
+                </p>
+                <p>
+                    <strong>Company Address:</strong>
+                    <%= quote.company_address %>
+                </p>
+                <div>
+                    <strong>Body:</strong>
+                    <div class="border-1 border-black rounded-lg p-2 my-2 inline-block">
+                        <%= quote.body %>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h2>Items:</h2>
+
+                <% if quote.items.any? %>
+                    <table class="table-auto border-collapse border border-gray-300">
+                    <thead>
+                        <tr>
+                            <th class="border border-gray-300 px-2 py-1">Name</th>
+                            <th class="border border-gray-300 px-2 py-1">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% quote.items.each do |item| %>
+                            <tr>
+                                <td class="border border-gray-300 px-2 py-1"><%= item.item_name %></td>
+                                <td class="border border-gray-300 px-2 py-1"><%= number_to_currency(item.price) %></td>
+                            </tr>
+                        <% end %>
+                    </tbody>
+                    </table>
+                <% else %>
+                    <p>No items added yet.</p>
+                <% end %>
+            </div>
+            <% end %>
+        </div>
+        <%= button_to "Add Quote", new_order_quote_path(@order), method: :get, class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>   
+        
     <% end %>
 </div>
