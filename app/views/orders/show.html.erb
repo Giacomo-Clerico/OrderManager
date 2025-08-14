@@ -1,0 +1,14 @@
+<% order = @order %>
+<div class="border-b border-gray-200 py-10">
+    <div class="flex items-center justify-start  gap-x-4">
+        <h2 class="text-lg font-semibold"><%= order.name%></h2>
+        <p>Created by: <%= order.user.email.split("@").first %></p>
+        <%= order.created_at.strftime("%d/%m/%Y %H:%M") %>
+    </div>
+    <%= order.description%>
+    <% if @order.checked_at.nil? %>
+        <%= button_to "Check Order", check_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 rounded" %>
+    <% else %>
+        <p>Checked by: <%= @order.checked_by.email.split("@").first %> at <%= @order.checked_at.strftime("%d/%m/%Y %H:%M") %></p>
+    <% end %>
+</div>

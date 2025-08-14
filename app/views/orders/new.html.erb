@@ -1,0 +1,20 @@
+<h1 class="font-bold text-xl p-5">New Order</h1>
+<%= form_with model: @order do |form| %>
+    <%if form.object.errors.any? %>
+        <div>
+            <% form.object.errors.full_messages.each do |message| %>
+                <div class="text-red-500 text-sm"><%= message %></div>
+            <% end %>
+        </div>
+    <%end%>
+    <div>
+        <%= form.label :name, "Order" %>
+        <%= form.text_field :name, class: "border rounded p-2 w-full" %>
+    </div>
+    <div class="py-3">
+        <%= form.label :description, "Description", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.rich_text_area :description, class: "trix-content border border-gray-300 rounded-md p-3 w-full focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
+    </div>
+
+    <%= form.button%>
+<% end %>
