@@ -23,6 +23,11 @@ class OrdersController < ApplicationController
 
   def check
     @order = Order.find(params[:id])
+    unless current_user.user_type.in?([ "manager", "director" ])
+      redirect_to root_path, alert: "You are not authorized for technical approvals"
+      return  # important: stop execution
+    end
+
     if @order.update_columns(checked_by_id: current_user.id, checked_at: Time.current)
       redirect_to @order, notice: "Order checked successfully"
     else
@@ -31,6 +36,7 @@ class OrdersController < ApplicationController
   end
 
   private
+
     def order_params
       params.require(:order).permit(:name, :description)
     end
