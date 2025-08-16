@@ -13,7 +13,7 @@ class Quote < ApplicationRecord
   private
 
   def user_must_have_permission
-    unless %w[cashier manager director].include?(requested_by.user_type)
+    unless %w[procurement manager director].include?(requested_by.user_type)
       errors.add(:user, "is not authorized to post a quote")
     end
   end

@@ -4,13 +4,25 @@
     <div class="flex items-center justify-start  gap-x-4">
         <p>Created by: <%= order.user.email.split("@").first %> at <%= order.created_at.strftime("%d/%m/%Y %H:%M") %></p>
         <% unless @order.checked_at.nil? %>
-            <p>Checked by: <%= @order.checked_by.email.split("@").first %> at <%= @order.checked_at.strftime("%d/%m/%Y %H:%M") %></p>
+            <% if @order.checked %>
+                <p>Checked by: <%= @order.checked_by.email.split("@").first %> at <%= @order.checked_at.strftime("%d/%m/%Y %H:%M") %></p>
+            <% else %>
+                <h1> Order was refused by <%= @order.checked_by.email.split("@").first %> at <%= @order.checked_at.strftime("%d/%m/%Y %H:%M") %></h1>
+            <% end %>
+        <% end %>
+        <% unless @order.quotes_submitted_by_id.nil? %>
+            <p>Quotes submitted by: <%= @order.quotes_submitted_by.email.split("@").first %> at <%= @order.quotes_submitted_at.strftime("%d/%m/%Y %H:%M") %></p>
         <% end %>
     </div>
     <%= order.description%>
     <% if @order.checked_at.nil? %>
+    <%# buttons to pass or refuse technical check%>
+    <div class="flex items-center justify-start gap-x-4 mt-4">
         <%= button_to "Check Order", check_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
-    <% else %>
+        <%= button_to "Refuse Order", refuse_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
+    </div>
+    <% elsif @order.checked %>
+    <%# if the order has been thecnically approved, show quotes and items below%>
         <h1 class="font-semibold text-lg mt-6">Quote Details</h1>
         <div class="flex flex-wrap gap-4 mt-4">
             <% @order.quotes.each do |quote| %>
@@ -40,13 +52,44 @@
                         <tr>
                             <th class="border border-gray-300 px-2 py-1">Name</th>
                             <th class="border border-gray-300 px-2 py-1">Price</th>
+                            <th class="border border-gray-300 px-2 py-1">
+                                Price (Currency)
+                                <select class="currency-select">
+                                <option value="USD">USD</option>
+                                <option value="ZMW">ZMW</option>
+                                </select>
+                            </th>
+                            <th class="border border-gray-300 px-2 py-1">Recommended</th>
+                            <%unless @order.quotes_submitted_by_id.nil? %>
+                                <th class="border border-gray-300 px-2 py-1">Selected</th>
+                            <% end %>
                         </tr>
                     </thead>
                     <tbody>
-                        <% quote.items.each do |item| %>
+                        <% quote.items.order(:id).each do |item| %>
                             <tr>
                                 <td class="border border-gray-300 px-2 py-1"><%= item.item_name %></td>
-                                <td class="border border-gray-300 px-2 py-1"><%= number_to_currency(item.price) %></td>
+                                <td class="border border-gray-300 px-2 py-1"><%= number_to_currency(item.price, unit: currency_symbol_for(item.currency)) %></td>
+                                <td class="border border-gray-300 px-2 py-1 price-cell"  data-price="<%= item.price %>" data-currency="<%= item.currency %>">
+                                    <%= number_to_currency(item.price, unit: item.currency) %>
+                                </td>
+                                <td class="border border-gray-300 px-2 py-1">
+                                    <% if item.recommended %>
+                                        <%= button_to "✓", unrecommend_order_quote_item_path(@order, quote, item), method: :patch, class: "text-green-600" %>
+                                    <% else %>
+                                        <%= button_to "☐", recommend_order_quote_item_path(@order, quote, item), method: :patch, class: "text-gray-600" %>
+                                    <% end %>
+                                </td>
+                                <%unless @order.quotes_submitted_by_id.nil? %>
+                                    <td class="border border-gray-300 px-2 py-1">
+                                        <% if item.selected %>
+                                            <%= button_to "✓", unselect_order_quote_item_path(@order, quote, item), method: :patch, class: "text-green-600" %>
+                                        <% else %>
+                                            <%= button_to "☐", select_order_quote_item_path(@order, quote, item), method: :patch, class: "text-gray-600" %>
+                                        <% end %>
+                                    </td>
+                                <% end %>
+
                             </tr>
                         <% end %>
                     </tbody>
@@ -57,7 +100,39 @@
             </div>
             <% end %>
         </div>
-        <%= button_to "Add Quote", new_order_quote_path(@order), method: :get, class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>   
-        
+        <div class="flex items-center justify-start gap-x-4 mt-4">
+            <% if @order.quotes_submitted_by_id.nil? %>
+                <%= button_to "Add Quote", new_order_quote_path(@order), method: :get, class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>
+            <% end %>
+            <% if @order.quotes.any? && @order.quotes_submitted_by_id.nil? %>
+                <%= button_to "Submit Quotes", submit_quote_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded ml-4" %>
+            <% end %>
+        </div>
     <% end %>
 </div>
+
+<script>
+window.exchangeRates = <%= Rails.cache.read('latest_exchange_rates').to_json.html_safe %> || {};
+console.log("Exchange rates:", window.exchangeRates);
+
+document.querySelectorAll('.currency-select').forEach(currencySelect => {
+  currencySelect.addEventListener('change', (event) => {
+    const selectedCurrency = event.target.value;
+    const exchangeRates = window.exchangeRates || {};
+    const priceCells = currencySelect.closest('table').querySelectorAll('.price-cell');
+
+    priceCells.forEach(cell => {
+      const originalPrice = parseFloat(cell.dataset.price);
+      const originalCurrency = cell.dataset.currency;
+
+      if (isNaN(originalPrice) || !exchangeRates[selectedCurrency] || !exchangeRates[originalCurrency]) return;
+
+      const rate = exchangeRates[selectedCurrency] / exchangeRates[originalCurrency];
+      const convertedPrice = originalPrice * rate;
+
+      cell.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: selectedCurrency }).format(convertedPrice);
+    });
+  });
+});
+
+</script>

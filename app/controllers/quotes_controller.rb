@@ -1,7 +1,7 @@
 class QuotesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_order
-  before_action :require_cashier_manager_or_director, only: [ :new, :create ]
+  before_action :require_procurement_manager_or_director, only: [ :new, :create ]
 
   def new
     @quote = @order.quotes.new
@@ -14,7 +14,7 @@ class QuotesController < ApplicationController
     if @quote.save
       redirect_to [ @order, @quote ], notice: "Quote created successfully"
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -33,8 +33,8 @@ class QuotesController < ApplicationController
     params.require(:quote).permit(:order_id, :company, :company_address, :body)
   end
 
-  def require_cashier_manager_or_director
-    unless %w[cashier manager director].include?(current_user.user_type)
+  def require_procurement_manager_or_director
+    unless %w[procurement manager director].include?(current_user.user_type)
       redirect_to root_path, alert: "You are not authorized to create quotes."
     end
   end

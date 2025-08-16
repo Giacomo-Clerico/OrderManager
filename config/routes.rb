@@ -14,9 +14,18 @@ Rails.application.routes.draw do
   resources :orders do
     member do
       patch :check
+      patch :refuse
+      patch :submit_quote
     end
     resources :quotes do
-      resources :items
+      resources :items do
+        member do
+          patch :select
+          patch :unselect
+          patch :recommend
+          patch :unrecommend
+        end
+      end
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
