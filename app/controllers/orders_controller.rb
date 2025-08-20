@@ -24,7 +24,7 @@ class OrdersController < ApplicationController
   def check
     @order = Order.find(params[:id])
     unless current_user.user_type.in?([ "manager", "director" ])
-      redirect_to root_path, alert: "You are not authorized for technical approvals"
+      redirect_to @order, alert: "You are not authorized for technical approvals"
       return  # important: stop execution
     end
 
@@ -75,6 +75,62 @@ class OrdersController < ApplicationController
       redirect_to @order, notice: "Quotes submitted successfully"
     else
       redirect_to @order, alert: "Unable to submit quotes"
+    end
+  end
+
+  def approve
+    @order = Order.find(params[:id])
+    unless current_user.user_type.in?([ "director" ])
+      redirect_to @order, alert: "You are not authorized for approving orders"
+      return  # important: stop execution
+    end
+
+    if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "approved")
+      redirect_to @order, notice: "Order approved successfully"
+    else
+      redirect_to @order, alert: "Unable to approve order"
+    end
+  end
+
+  def deny
+    @order = Order.find(params[:id])
+    unless current_user.user_type.in?([ "director" ])
+      redirect_to @order, alert: "You are not authorized for denying orders"
+      return  # important: stop execution
+    end
+
+    if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "denied")
+      redirect_to @order, notice: "Order denied successfully"
+    else
+      redirect_to @order, alert: "Unable to deny order"
+    end
+  end
+
+  def revise
+    @order = Order.find(params[:id])
+    unless current_user.user_type.in?([ "director" ])
+      redirect_to @order, alert: "You are not authorized for revising orders"
+      return  # important: stop execution
+    end
+
+    if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "revised")
+      redirect_to @order, notice: "Order revised successfully"
+    else
+      redirect_to @order, alert: "Unable to revise order"
+    end
+  end
+
+  def restore
+    @order = Order.find(params[:id])
+    unless current_user.user_type.in?([ "director" ])
+      redirect_to @order, alert: "You are not authorized for restoring orders"
+      return  # important: stop execution
+    end
+
+    if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "revised")
+      redirect_to @order, notice: "Order restored successfully"
+    else
+      redirect_to @order, alert: "Unable to restore order"
     end
   end
 

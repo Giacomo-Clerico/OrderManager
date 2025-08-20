@@ -3,29 +3,41 @@
     <h2 class="text-xl font-bold"><%= order.name%></h2>
     <div class="flex items-center justify-start  gap-x-4">
         <p>Created by: <%= order.user.email.split("@").first %> at <%= order.created_at.strftime("%d/%m/%Y %H:%M") %></p>
-        <% unless @order.checked_at.nil? %>
-            <% if @order.checked %>
-                <p>Checked by: <%= @order.checked_by.email.split("@").first %> at <%= @order.checked_at.strftime("%d/%m/%Y %H:%M") %></p>
+        <% unless order.checked_at.nil? %>
+            <% if order.checked %>
+                <p>Checked by: <%= order.checked_by.email.split("@").first %> at <%= order.checked_at.strftime("%d/%m/%Y %H:%M") %></p>
             <% else %>
-                <h1> Order was refused by <%= @order.checked_by.email.split("@").first %> at <%= @order.checked_at.strftime("%d/%m/%Y %H:%M") %></h1>
+                <h1> Order was refused by <%= order.checked_by.email.split("@").first %> at <%= order.checked_at.strftime("%d/%m/%Y %H:%M") %></h1>
             <% end %>
         <% end %>
-        <% unless @order.quotes_submitted_by_id.nil? %>
-            <p>Quotes submitted by: <%= @order.quotes_submitted_by.email.split("@").first %> at <%= @order.quotes_submitted_at.strftime("%d/%m/%Y %H:%M") %></p>
+        <% unless order.quotes_submitted_by_id.nil? %>
+            <p>Quotes submitted by: <%= order.quotes_submitted_by.email.split("@").first %> at <%= order.quotes_submitted_at.strftime("%d/%m/%Y %H:%M") %></p>
+
         <% end %>
     </div>
-    <%= order.description%>
-    <% if @order.checked_at.nil? %>
+    <% unless order.quotes_submitted_by_id.nil? %>
+        <p>Order status: 
+        <% if order.approved.nil? %>
+            <span class="text-yellow-500">Pending</span>
+        <% else %>
+            <%= order.approved.capitalize %> by <%= order.approved_by.email.split("@").first %> at <%= order.approved_at.strftime("%d/%m/%Y %H:%M") if order.approved_at %>
+        <% end %>
+        </p>
+    <% end %>
+    <div class="my-5">
+        <%= order.description %>
+    </div>
+    <% if order.checked_at.nil? %>
     <%# buttons to pass or refuse technical check%>
     <div class="flex items-center justify-start gap-x-4 mt-4">
         <%= button_to "Check Order", check_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
         <%= button_to "Refuse Order", refuse_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
     </div>
-    <% elsif @order.checked %>
+    <% elsif order.checked %>
     <%# if the order has been thecnically approved, show quotes and items below%>
         <h1 class="font-semibold text-lg mt-6">Quote Details</h1>
         <div class="flex flex-wrap gap-4 mt-4">
-            <% @order.quotes.each do |quote| %>
+            <% order.quotes.each do |quote| %>
             <div class="border border-gray-300 rounded-lg p-5">
                 <p>
                     <strong>Company:</strong>
@@ -59,8 +71,10 @@
                                 <option value="ZMW">ZMW</option>
                                 </select>
                             </th>
-                            <th class="border border-gray-300 px-2 py-1">Recommended</th>
-                            <%unless @order.quotes_submitted_by_id.nil? %>
+                            <% unless order.approved == "approved" %>
+                                <th class="border border-gray-300 px-2 py-1">Recommended</th>
+                            <% end %>
+                            <%unless order.quotes_submitted_by_id.nil? %>
                                 <th class="border border-gray-300 px-2 py-1">Selected</th>
                             <% end %>
                         </tr>
@@ -73,14 +87,16 @@
                                 <td class="border border-gray-300 px-2 py-1 price-cell"  data-price="<%= item.price %>" data-currency="<%= item.currency %>">
                                     <%= number_to_currency(item.price, unit: item.currency) %>
                                 </td>
-                                <td class="border border-gray-300 px-2 py-1">
-                                    <% if item.recommended %>
-                                        <%= button_to "✓", unrecommend_order_quote_item_path(@order, quote, item), method: :patch, class: "text-green-600" %>
-                                    <% else %>
-                                        <%= button_to "☐", recommend_order_quote_item_path(@order, quote, item), method: :patch, class: "text-gray-600" %>
-                                    <% end %>
-                                </td>
-                                <%unless @order.quotes_submitted_by_id.nil? %>
+                                <% unless order.approved == "approved" %>
+                                    <td class="border border-gray-300 px-2 py-1">
+                                        <% if item.recommended %>
+                                            <%= button_to "✓", unrecommend_order_quote_item_path(@order, quote, item), method: :patch, class: "text-green-600" %>
+                                        <% else %>
+                                            <%= button_to "☐", recommend_order_quote_item_path(@order, quote, item), method: :patch, class: "text-gray-600" %>
+                                        <% end %>
+                                    </td>
+                                <% end %>
+                                <%unless order.quotes_submitted_by_id.nil? %>
                                     <td class="border border-gray-300 px-2 py-1">
                                         <% if item.selected %>
                                             <%= button_to "✓", unselect_order_quote_item_path(@order, quote, item), method: :patch, class: "text-green-600" %>
@@ -89,7 +105,6 @@
                                         <% end %>
                                     </td>
                                 <% end %>
-
                             </tr>
                         <% end %>
                     </tbody>
@@ -101,13 +116,60 @@
             <% end %>
         </div>
         <div class="flex items-center justify-start gap-x-4 mt-4">
-            <% if @order.quotes_submitted_by_id.nil? %>
+            <% if order.quotes_submitted_by_id.nil? %>
                 <%= button_to "Add Quote", new_order_quote_path(@order), method: :get, class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>
             <% end %>
-            <% if @order.quotes.any? && @order.quotes_submitted_by_id.nil? %>
+            <% if order.quotes.any? && order.quotes_submitted_by_id.nil? %>
                 <%= button_to "Submit Quotes", submit_quote_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded ml-4" %>
             <% end %>
         </div>
+        <% unless order.quotes_submitted_by_id.nil? %>
+            <% if order.approved.nil? || order.approved == "revised" %>
+                <div class="flex items-center justify-start gap-x-4 mt-4">
+                    <%= button_to "Approve Order", approve_order_path(@order), method: :patch, class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>
+                    <%= button_to "Revise Order", revise_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
+                    <%= button_to "Deny Order", deny_order_path(@order), method: :patch, class: "bg-red-500 text-white px-3 py-1 mt-4 rounded" %>
+                </div>
+            <% elsif order.approved != "denied" %>
+                <% if order.payments.any? %>
+                    <h1 class="font-semibold text-lg mt-6">Payments</h1>
+                    <div class="flex flex-wrap gap-4 mt-4 mb-4">
+                    <% order.payments.each do |payment| %>
+                        <div class="border border-gray-300 rounded-lg p-5">
+                            <p>
+                                <strong>Company:</strong>
+                                <%= payment.company %>
+                            </p>
+                            <p>
+                                <strong>Bank:</strong>
+                                <%= payment.bank %>
+                            </p>
+                            <p>
+                                <strong>Account:</strong>
+                                <%= payment.account %>
+                            </p>
+                            <p>
+                                <strong>Paid by:</strong>
+                                <%= payment.paid_by.email.split("@").first %>
+                            </p>
+                            <p>
+                                <strong>Notes:</strong>
+                                <div class="border-1 border-black rounded-lg p-2 my-2 inline-block">
+                                    <%= payment.body %>
+                                </div>
+                            </p>
+                        </div>
+                    <% end %>
+                    </div>
+                <% end %>
+                <%= link_to "Add Proof of Payment", new_order_payment_path(@order), class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>
+            <% end %>
+
+            <% if order.approved == "denied" %>
+                <%= button_to "Restore Order", restore_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
+            <% end %>
+            
+        <% end %>
     <% end %>
 </div>
 

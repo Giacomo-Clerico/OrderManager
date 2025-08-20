@@ -16,6 +16,10 @@ Rails.application.routes.draw do
       patch :check
       patch :refuse
       patch :submit_quote
+      patch :approve
+      patch :deny
+      patch :revise
+      patch :restore
     end
     resources :quotes do
       resources :items do
@@ -27,6 +31,7 @@ Rails.application.routes.draw do
         end
       end
     end
+    resources :payments
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
