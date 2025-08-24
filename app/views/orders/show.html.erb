@@ -38,6 +38,7 @@
         <h1 class="font-semibold text-lg mt-6">Quote Details</h1>
         <div class="flex flex-wrap gap-4 mt-4">
             <% order.quotes.each do |quote| %>
+            <% if quote.items.where(selected: true).exists? && order.approved == "approved"%>
             <div class="border border-gray-300 rounded-lg p-5">
                 <p>
                     <strong>Company:</strong>
@@ -80,7 +81,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% quote.items.order(:id).each do |item| %>
+                        <% items = order.approved ? quote.items.where(selected: true).order(:id) : quote.items.order(:id)  %>
+                        <% items.each do |item| %>
                             <tr>
                                 <td class="border border-gray-300 px-2 py-1"><%= item.item_name %></td>
                                 <td class="border border-gray-300 px-2 py-1"><%= number_to_currency(item.price, unit: currency_symbol_for(item.currency)) %></td>
@@ -113,6 +115,7 @@
                     <p>No items added yet.</p>
                 <% end %>
             </div>
+            <% end %>
             <% end %>
         </div>
         <div class="flex items-center justify-start gap-x-4 mt-4">
@@ -153,6 +156,14 @@
                                 <%= payment.paid_by.email.split("@").first %>
                             </p>
                             <p>
+                                <strong>Paid from:</strong>
+                                <%= payment.from_account %>
+                            </p>
+                            <p>
+                                <strong>Amount:</strong>
+                                <%=  number_to_currency(payment.amount, unit: currency_symbol_for(payment.currency)) %>
+                            </p>
+                            <p>
                                 <strong>Notes:</strong>
                                 <div class="border-1 border-black rounded-lg p-2 my-2 inline-block">
                                     <%= payment.body %>
@@ -163,6 +174,37 @@
                     </div>
                 <% end %>
                 <%= link_to "Add Proof of Payment", new_order_payment_path(@order), class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>
+                
+                <% if order.delivery_notes.any? %>
+                    <h1 class="font-semibold text-lg mt-6">Delivery notes</h1>
+                    <div class="flex flex-wrap gap-4 mt-4 mb-4">
+                    <% order.delivery_notes.each do |delivery_note| %>
+                        <div class="border border-gray-300 rounded-lg p-5">
+                            <p>
+                                <strong>received by:</strong>
+                                <%= delivery_note.recieved_by.email.split("@").first %>
+                                <strong>at:</strong>
+                                <%= delivery_note.created_at.strftime("%d/%m/%Y %H:%M") %>
+                            </p>
+                            <p>
+                                <strong>Company: </strong>
+                                <%= delivery_note.company %>
+                            </p>
+                            <p>
+                                <strong>Notes:</strong>
+                                <div class="border-1 border-black rounded-lg p-2 my-2 inline-block">
+                                    <%= delivery_note.body %>
+                                </div>
+                            </p>
+                            <p>
+                                <%= link_to "Go to Goods Receiving Voucher", order_delivery_note_path(order, delivery_note), class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
+                            </p>
+                        </div>
+                    <% end %>
+                    </div>
+                <% end %>
+                <%= link_to "Add Goods Recieving Voucher", new_order_delivery_note_path(@order), class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>
+
             <% end %>
 
             <% if order.approved == "denied" %>
@@ -170,6 +212,37 @@
             <% end %>
             
         <% end %>
+    <% end %>
+
+</div>
+<div class="border-b border-gray-200 py-3">
+<h1 class="text-xl font-bold">Comments</h1>
+    <div>
+        <%= form_with(model: Comment.new, url: order_comments_path(@order), local: true) do |f| %>
+            <div class="border-1 border-black rounded-lg p-3 mb-4">
+                <%= f.rich_text_area :body, class: "border rounded p-2 w-full" %>
+                <%= f.submit "Create Comment", class: "bg-green-500 text-white px-3 py-1 mt-1 rounded" %>
+            </div>
+        <% end %>
+    </div>
+    <% if order.comments.any? %>
+        <div class="mt-2 mb-4">
+        <% order.comments.each do |comment| %>
+            <div class="border border-gray-300 rounded-lg p-5 mb-2">
+                <p>
+                    <strong>
+                    <%= comment.user.email.split("@").first %>
+                    </strong>
+                    at:
+                    <%= comment.created_at.strftime("%d/%m/%Y %H:%M") %>
+                </p>
+                <p>
+                    <%= comment.body %>
+                </p>
+            </div>
+        <% end %>
+    <% else %>
+        <p> no comments yet </p>
     <% end %>
 </div>
 

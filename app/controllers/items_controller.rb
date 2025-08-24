@@ -32,7 +32,10 @@ class ItemsController < ApplicationController
       redirect_to @order, alert: "You are not authorized for selecting items"
       return  # important: stop execution
     end
-
+    unless @order.approved.nil?
+      redirect_to @order, alert: "You cannot select items after order approval"
+      return  # important: stop execution
+    end
     if @item.update_columns(selected: true)
       redirect_to @order
     else
@@ -45,6 +48,11 @@ class ItemsController < ApplicationController
     @item = @quote.items.find(params[:id])
     unless current_user.user_type.in?([ "manager", "director" ])
       redirect_to @order, alert: "You are not authorized for selecting items"
+      return  # important: stop execution
+    end
+
+    unless @order.approved.nil?
+      redirect_to @order, alert: "You cannot select items after order approval"
       return  # important: stop execution
     end
 

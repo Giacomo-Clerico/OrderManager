@@ -33,7 +33,7 @@ class PaymentsController < ApplicationController
   end
 
   def payment_params
-    params.require(:payment).permit(:order_id, :company, :body, :bank, :account, :paid_by)
+    params.require(:payment).permit(:order_id, :company, :body, :bank, :account, :paid_by, :from_account, :amount, :currency)
   end
 
   def require_cashier_manager_or_director

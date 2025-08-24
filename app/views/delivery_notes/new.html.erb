@@ -1,0 +1,22 @@
+<%= form_with(model: [@order, @delivery_note]) do |form| %>
+    <%if form.object.errors.any? %>
+        <div>
+            <% form.object.errors.full_messages.each do |message| %>
+                <div class="text-red-500 text-sm"><%= message %></div>
+            <% end %>
+        </div>
+    <%end%>
+    <%= form.hidden_field :order_id %>
+
+    <div>
+        <%= form.label :company %>
+        <%= form.text_field :company, class: "border rounded p-2 w-full" %>
+    </div>
+
+    <div>
+        <%= form.label :body %>
+        <%= form.rich_textarea :body %>
+    </div>
+
+    <%= form.submit "Save GRV", class: "bg-green-500 text-white px-3 py-2 mt-4 rounded" %>
+<% end %>

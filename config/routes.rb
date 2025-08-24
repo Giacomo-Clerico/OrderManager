@@ -32,6 +32,10 @@ Rails.application.routes.draw do
       end
     end
     resources :payments
+    resources :delivery_notes do
+      resources :goods
+    end
+    resources :comments
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

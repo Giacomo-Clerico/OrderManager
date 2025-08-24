@@ -1,0 +1,63 @@
+<h1 class="font-bold text-xl">Goods Recieving Voucher Details</h1>
+
+<p>
+    <strong>Recieved by: </strong>
+    <%= @delivery_note.recieved_by.email.split("@").first %>
+    <strong>at: </strong>
+    <%= @delivery_note.created_at.strftime("%d/%m/%Y %H:%M") %>
+</p>
+
+<p>
+    <strong>Order:</strong>
+    <%= link_to @order.name, @order %>
+</p>
+
+<p>
+    <strong>Company:</strong>
+    <%= @delivery_note.company %>
+</p>
+
+<div>
+    <strong>Body:</strong>
+    <div class="border-1 border-black rounded-lg p-2 my-2 inline-block">
+        <%= @delivery_note.body %>
+    </div>
+</div>
+
+<hr>
+<h2>Goods:</h2>
+
+<% if @goods.any? %>
+    <table class="table-auto border-collapse border border-gray-300">
+    <thead>
+        <tr>
+            <th class="border border-gray-300 px-2 py-1">Description</th>
+            <th class="border border-gray-300 px-2 py-1">Quantity</th>
+            <th class="border border-gray-300 px-2 py-1">Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @goods.each do |good| %>
+            <tr>
+                <td class="border border-gray-300 px-2 py-1"><%= good.description %></td>
+                <td class="border border-gray-300 px-2 py-1"><%= good.quantity %></td>
+                <td class="border border-gray-300 px-2 py-1"><%= good.location %></td>
+            </tr>
+        <% end %>
+    </tbody>
+    </table>
+<% else %>
+    <p>No items added yet.</p>
+<% end %>
+<%= form_with(model: Good.new, url: order_delivery_note_goods_path(@delivery_note.order, @delivery_note), local: true) do |f| %>
+    <div class="flex gap-2 mt-2">
+        <%= f.text_field :description, placeholder: "description", class: "border p-1 rounded" %>
+        <%= f.text_field :location, placeholder: "location", class: "border p-1 rounded" %>
+        <%= f.number_field :quantity, placeholder: "Quantity", class: "border p-1 rounded", min: 1 %>
+        <%= f.submit "Add", class: "bg-green-500 text-white px-2 rounded" %>
+    </div>
+<% end %>
+
+<div class="mt-4">
+    <%= link_to "Back to Order", @order, class: "bg-gray-500 text-white px-3 py-1 rounded" %>
+</div>

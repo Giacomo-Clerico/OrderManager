@@ -1,0 +1,5 @@
+class AddPoNumberToQuotes < ActiveRecord::Migration[8.0]
+  def change
+    add_column :quotes, :po_number, :string
+  end
+end
