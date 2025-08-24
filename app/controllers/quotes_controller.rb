@@ -2,7 +2,7 @@ class QuotesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_order
   before_action :require_procurement_manager_or_director, only: [ :new, :create ]
-  before_action :block_modification_if_submitted, only: [ :edit, :update ]
+  before_action :block_changes_if_submitted, only: [ :edit, :update, :destroy ]
 
   def new
     @quote = @order.quotes.new
@@ -42,6 +42,12 @@ class QuotesController < ApplicationController
     end
   end
 
+  def destroy
+    @quote = @order.quotes.find(params[:id])
+    @quote.destroy
+    redirect_to @order, notice: "Quote removed successfully"
+  end
+
   private
 
   def set_order
@@ -58,9 +64,9 @@ class QuotesController < ApplicationController
     end
   end
 
-  def block_modification_if_submitted
+  def block_changes_if_submitted
     if @order.quotes_submitted_by.present?
-      redirect_to @order, alert: "You cannot modify quotes after submission"
+      redirect_to @order, alert: "You cannot modify or remove quotes after submission"
     end
   end
 end

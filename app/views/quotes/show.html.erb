@@ -34,6 +34,13 @@
 
 <div class="mt-4 mb-2 flex gap-2">
     <%= link_to "Modify Quote", edit_order_quote_path(@order, @quote), class: "bg-blue-500 text-white px-3 py-1 rounded" %>
+    <% if @order.quotes_submitted_by.blank? %>
+        <%= button_to "Remove Quote",
+                order_quote_path(@order, @quote),
+                method: :delete,
+                data: { confirm: "Are you sure you want to delete this quote?" },
+                class: "bg-red-500 text-white px-3 py-1 rounded" %>
+    <% end %>
 </div>
 
 <hr>
