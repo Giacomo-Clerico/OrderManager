@@ -1,0 +1,31 @@
+<h1 class="font-bold text-xl">Edit Quote</h1>
+
+<%= form_with(model: [@order, @quote], local: true) do |f| %>
+    <div class="my-2">
+        <%= f.label :company, class: "block font-semibold" %>
+        <%= f.text_field :company, class: "border p-1 rounded w-full" %>
+    </div>
+
+    <div class="my-2">
+        <%= f.label :buy_as, "Buy As", class: "block font-semibold" %>
+        <%= f.select :buy_as, Quote::PREFIXES.map {|code, name| [name, code]}, 
+            { selected: @quote.buy_as }, 
+            class: "border p-1 rounded" %>
+    </div>
+
+    <div class="my-2">
+        <%= f.label :company_address, class: "block font-semibold" %>
+        <%= f.text_area :company_address, rows: 2, class: "border p-1 rounded w-full" %>
+    </div>
+
+    <div class="my-2">
+        <%= f.label :body, class: "block font-semibold" %>
+        <%= f.rich_textarea :body, rows: 4, class: "border p-1 rounded w-full" %>
+    </div>
+
+    <%= f.submit "Update Quote", class: "bg-blue-500 text-white px-3 py-1 rounded" %>
+<% end %>
+
+<div class="mt-4">
+<%= link_to "Back to Quote", [@order, @quote], class: "bg-gray-500 text-white px-3 py-1 rounded" %>
+</div>

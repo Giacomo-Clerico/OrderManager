@@ -2,6 +2,7 @@ class QuotesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_order
   before_action :require_procurement_manager_or_director, only: [ :new, :create ]
+  before_action :block_modification_if_submitted, only: [ :edit, :update ]
 
   def new
     @quote = @order.quotes.new
@@ -23,6 +24,24 @@ class QuotesController < ApplicationController
     @items = @quote.items
   end
 
+  def edit
+    @quote = @order.quotes.find(params[:id])
+  end
+
+  def update
+    @quote = @order.quotes.find(params[:id])
+    unless @order.quotes_submitted_by.nil?
+      redirect_to @order, alert: "You cannot modify quotes after order approval"
+      return  # important: stop execution
+    end
+
+    if @quote.update(quote_params)
+      redirect_to [ @order, @quote ], notice: "Quote updated successfully"
+    else
+      render :edit, status: :unprocessable_content
+    end
+  end
+
   private
 
   def set_order
@@ -36,6 +55,12 @@ class QuotesController < ApplicationController
   def require_procurement_manager_or_director
     unless %w[procurement manager director].include?(current_user.user_type)
       redirect_to root_path, alert: "You are not authorized to create quotes."
+    end
+  end
+
+  def block_modification_if_submitted
+    if @order.quotes_submitted_by.present?
+      redirect_to @order, alert: "You cannot modify quotes after submission"
     end
   end
 end

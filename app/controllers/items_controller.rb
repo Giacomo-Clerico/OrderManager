@@ -9,6 +9,13 @@ class ItemsController < ApplicationController
   def create
     @quote = Quote.find(params[:quote_id])
     @item = @quote.items.new(item_params.merge(selected: false, recommended: false))
+
+    quote_currency = @quote.items.first&.currency
+
+    if quote_currency.present? && @item.currency != quote_currency
+      redirect_back(fallback_location: order_path(@quote.order), alert: "Item currency must match the other items' currency: #{quote_currency}") and return
+    end
+
     unless @quote.order.quotes_submitted_by_id.nil?
       unless current_user.user_type.in?([ "manager", "director" ])
         redirect_to @quote.order, alert: "You are not authorized to add items to this already submitted quote"
@@ -32,7 +39,7 @@ class ItemsController < ApplicationController
       redirect_to @order, alert: "You are not authorized for selecting items"
       return  # important: stop execution
     end
-    unless @order.approved.nil?
+    unless @order.approved == "approved" || @order.approved == "revised"
       redirect_to @order, alert: "You cannot select items after order approval"
       return  # important: stop execution
     end

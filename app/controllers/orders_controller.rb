@@ -122,7 +122,7 @@ class OrdersController < ApplicationController
       return  # important: stop execution
     end
 
-    if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "revised")
+    if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "revised", quotes_submitted_by_id: nil, quotes_submitted_at: nil)
       redirect_to @order, notice: "Order revised successfully"
     else
       redirect_to @order, alert: "Unable to revise order"

@@ -91,7 +91,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% items = order.approved ? quote.items.where(selected: true).order(:id) : quote.items.order(:id)  %>
+                        <% items = order.approved == "approved" ? quote.items.where(selected: true).order(:id) : quote.items.order(:id)  %>
                         <% items.each do |item| %>
                             <tr>
                                 <td class="border border-gray-300 px-2 py-1"><%= item.item_name %></td>
