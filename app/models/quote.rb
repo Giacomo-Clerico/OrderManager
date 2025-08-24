@@ -10,6 +10,21 @@ class Quote < ApplicationRecord
   validate :user_must_have_permission
   validates :company, :company_address, :body, presence: true
 
+  PREFIXES = {
+    "MF" => "Mutanda Farms",
+    "AV" => "Avantech",
+    "MM" => "Mutanda Milling",
+    "KE" => "King Eggs",
+    "NS" => "Ntegu Safaris",
+    "TA" => "Tandara"
+  }.freeze
+  validates :buy_as, presence: true, inclusion: { in: PREFIXES.keys }
+
+  def prefix_name
+    PREFIXES[buy_as]
+  end
+
+
   private
 
   def user_must_have_permission

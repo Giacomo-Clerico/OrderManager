@@ -35,11 +35,17 @@
     </div>
     <% elsif order.checked %>
     <%# if the order has been thecnically approved, show quotes and items below%>
-        <h1 class="font-semibold text-lg mt-6">Quote Details</h1>
+        <h1 class="font-semibold text-lg mt-6"><%= (order.approved == "approved") ? "Purchase Orders" : "Quote details" %></h1>
         <div class="flex flex-wrap gap-4 mt-4">
-            <% order.quotes.each do |quote| %>
-            <% if quote.items.where(selected: true).exists? && order.approved == "approved"%>
+            <% quotes = (order.approved == "approved") ? order.quotes.joins(:items).where(items: { selected: true }).distinct : order.quotes %>
+            <% quotes.each do |quote| %>
             <div class="border border-gray-300 rounded-lg p-5">
+                <% if order.approved == "approved" %>
+                    <p>
+                        <strong>PO number:</strong>
+                        <%= link_to quote.po_number, order_quote_path(@order, quote) %>
+                    </p>
+                <% end %>
                 <p>
                     <strong>Company:</strong>
                     <%= link_to quote.company, order_quote_path(@order, quote) %>
@@ -47,6 +53,10 @@
                 <p>
                     <strong>Company Address:</strong>
                     <%= quote.company_address %>
+                </p>
+                <p>
+                    <strong>Buy As:</strong>
+                    <%= quote.prefix_name %>
                 </p>
                 <div>
                     <strong>Body:</strong>
@@ -115,7 +125,6 @@
                     <p>No items added yet.</p>
                 <% end %>
             </div>
-            <% end %>
             <% end %>
         </div>
         <div class="flex items-center justify-start gap-x-4 mt-4">

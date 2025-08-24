@@ -80,11 +80,20 @@ class OrdersController < ApplicationController
 
   def approve
     @order = Order.find(params[:id])
+
+    # authorization
     unless current_user.user_type.in?([ "director" ])
       redirect_to @order, alert: "You are not authorized for approving orders"
       return  # important: stop execution
     end
 
+    # Validation: must have at least one selected item
+    unless @order.quotes.joins(:items).where(items: { selected: true }).exists?
+      redirect_to @order, alert: "You cannot approve an order with no selected items"
+      return
+    end
+
+    assign_po_numbers(@order)
     if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "approved")
       redirect_to @order, notice: "Order approved successfully"
     else
@@ -138,5 +147,32 @@ class OrdersController < ApplicationController
 
     def order_params
       params.require(:order).permit(:name, :description)
+    end
+
+    def assign_po_numbers(order)
+      current_year_suffix = Time.current.strftime("%y")  # e.g. "25"
+
+      order.quotes.each do |quote|
+        # only assign if it has at least one selected item
+        next unless quote.items.where(selected: true).exists?
+
+        # only assign if PO number is not already set
+        next if quote.po_number.present?
+
+        # find the last PO with the same year prefix
+        last_po = Quote.where("po_number LIKE ?", "POMF#{current_year_suffix}%").order(:po_number).last
+
+        last_number = if last_po&.po_number.present?
+          last_po.po_number[-4..].to_i  # last 4 digits
+        else
+          0
+        end
+
+        # build new PO
+        prefix = quote.buy_as # you can make this dynamic later if needed
+        new_po_number = "#{prefix}#{current_year_suffix}#{format("%04d", last_number + 1)}"
+
+        quote.update!(po_number: new_po_number)
+      end
     end
 end

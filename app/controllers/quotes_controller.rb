@@ -30,7 +30,7 @@ class QuotesController < ApplicationController
   end
 
   def quote_params
-    params.require(:quote).permit(:order_id, :company, :company_address, :body)
+    params.require(:quote).permit(:order_id, :company, :buy_as, :company_address, :body)
   end
 
   def require_procurement_manager_or_director
