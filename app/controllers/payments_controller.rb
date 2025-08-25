@@ -1,22 +1,32 @@
 class PaymentsController < ApplicationController
   before_action :set_order
+  before_action :set_quote
   before_action :set_payment, only: [ :show ]
   before_action :authenticate_user!
   before_action :require_cashier_manager_or_director, only: [ :new, :create ]
 
   def index
-    @payments = Payment.all
+    @payments = @quote.payments.all
   end
 
   def new
-    @payment = Payment.new
+    @payment = @quote.payments.new
   end
 
   def create
-    @payment = @order.payments.new(payment_params)
+    @payment = @quote.payments.new(payment_params)
+    @payment.order = @order
     @payment.paid_by = current_user
+
+    payment_currency = @quote.items.first&.currency
+
+    if payment_currency.present? && @payment.currency != payment_currency
+      flash.now[:alert] = "Payment currency must match the one in the quote's items' currency: #{payment_currency}"
+      render :new, status: :unprocessable_entity and return
+    end
+
     if @payment.save
-      redirect_to @order, notice: "Payment was successfully created."
+      redirect_to order_quote_path(@order, @quote), notice: "Payment was successfully created."
     else
       render :new, notice: "Failed to create payment"
     end
@@ -28,12 +38,16 @@ class PaymentsController < ApplicationController
     @order = Order.find(params[:order_id])
   end
 
+  def set_quote
+    @quote = @order.quotes.find(params[:quote_id])
+  end
+
   def set_payment
     @payment = Payment.find(params[:id])
   end
 
   def payment_params
-    params.require(:payment).permit(:order_id, :company, :body, :bank, :account, :paid_by, :from_account, :amount, :currency)
+    params.require(:payment).permit(:order_id, :quote_id, :company, :body, :bank, :account, :paid_by, :from_account, :amount, :currency)
   end
 
   def require_cashier_manager_or_director

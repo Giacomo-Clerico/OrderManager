@@ -39,7 +39,7 @@ class ItemsController < ApplicationController
       redirect_to @order, alert: "You are not authorized for selecting items"
       return  # important: stop execution
     end
-    unless @order.approved == "approved" || @order.approved == "revised"
+    if @order.approved == "approved"
       redirect_to @order, alert: "You cannot select items after order approval"
       return  # important: stop execution
     end
@@ -113,6 +113,25 @@ class ItemsController < ApplicationController
       redirect_to @order
     else
       redirect_to @order, alert: "Unable to unrecommend item"
+    end
+  end
+
+
+  def destroy
+    @item = @quote.items.find(params[:id])
+
+    # block if the quote has already been submitted
+    unless @quote.order.quotes_submitted_by_id.nil?
+      unless current_user.user_type.in?([ "manager", "director" ])
+        redirect_to @quote.order, alert: "You are not authorized to remove items from this already submitted quote"
+        return
+      end
+    end
+
+    if @item.destroy
+      redirect_to [ @order, @quote ], notice: "Item removed successfully"
+    else
+      redirect_to [ @order, @quote ], alert: "Item could not be removed"
     end
   end
 

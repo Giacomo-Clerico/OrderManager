@@ -4,6 +4,7 @@ class Quote < ApplicationRecord
 
 
   has_many :items, dependent: :destroy
+  has_many :payments, dependent: :destroy
 
   has_rich_text :body
 

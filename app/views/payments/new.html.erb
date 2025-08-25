@@ -1,6 +1,6 @@
 <h1 class="mb-2">Add New proof of payment to order: <%= @order.name %></h1>
 
-<%= form_with(model: @payment, url: order_payments_path(@order)) do |form| %>
+<%= form_with(model: @payment, url: order_quote_payments_path(@order, @quote)) do |form| %>
     <div class="mb-4">
         <%= form.label :company, class: "block text-sm font-medium text-gray-700" %>
         <%= form.text_field :company, class: "mt-1 block w-full border border-gray-300 rounded-md p-2" %>
@@ -34,7 +34,7 @@
     <div class="mb-4">
         <%= form.label :currency, class: "block text-sm font-medium text-gray-700" %>
         <%= form.select :currency, ["USD", "ZMW", "ZAR", "EUR"],
-        {}, class: "mt-1 block w-full border border-gray-300 rounded-md p-2" %>
+        {selected: @quote.items.first&.currency}, class: "mt-1 block w-full border border-gray-300 rounded-md p-2" %>
     </div>
     
     <%= form.submit "Save Payment", class: "bg-green-500 text-white px-4 py-2 rounded" %>

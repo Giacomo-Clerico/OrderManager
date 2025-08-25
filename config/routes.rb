@@ -30,8 +30,8 @@ Rails.application.routes.draw do
           patch :unrecommend
         end
       end
+      resources :payments
     end
-    resources :payments
     resources :delivery_notes do
       resources :goods
     end
