@@ -17,10 +17,8 @@ class ItemsController < ApplicationController
     end
 
     unless @quote.order.quotes_submitted_by_id.nil?
-      unless current_user.user_type.in?([ "manager", "director" ])
-        redirect_to @quote.order, alert: "You are not authorized to add items to this already submitted quote"
+        redirect_to [ @order, @quote ], alert: "You are not authorized to add items to this already submitted quote"
         return  # important: stop execution
-      end
     end
     if @item.save
       redirect_back(fallback_location: order_path(@quote.order))

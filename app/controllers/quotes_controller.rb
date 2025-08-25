@@ -22,6 +22,7 @@ class QuotesController < ApplicationController
   def show
     @quote = @order.quotes.find(params[:id])
     @items = @quote.items
+    @delivery_notes = DeliveryNote.where(po_number: @quote.po_number)
   end
 
   def edit

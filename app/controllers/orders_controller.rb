@@ -71,6 +71,12 @@ class OrdersController < ApplicationController
       return  # important: stop execution
     end
 
+    # Validation: must have at least one item
+    unless @order.quotes.joins(:items).any?
+      redirect_to @order, alert: "You cannot submit without at least an item"
+      return
+    end
+
     if @order.update_columns(quotes_submitted_at: Time.current, quotes_submitted_by_id: current_user.id)
       redirect_to @order, notice: "Quotes submitted successfully"
     else

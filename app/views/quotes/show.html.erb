@@ -76,54 +76,115 @@
 <% else %>
     <p>No items added yet.</p>
 <% end %>
-<%= form_with(model: Item.new, url: order_quote_items_path(@quote.order, @quote), local: true) do |f| %>
-    <div class="flex gap-2 mt-2">
-        <%= f.text_field :item_name, placeholder: "Item name", class: "border p-1 rounded" %>
-        <%= f.number_field :price, placeholder: "Price", class: "border p-1 rounded", min: 1 %>
-        <%= f.select :currency, ["USD", "ZMW", "ZAR", "EUR"],
-        { selected: @quote.items.first&.currency }, class: "mt-1 block border border-gray-300 rounded-md p-2" %>
-        <%= f.submit "Add", class: "bg-green-500 text-white px-2 rounded" %>
-    </div>
-<% end %>
-<% if @quote.order.payments.any? %>
-    <h1 class="font-semibold text-lg mt-6">Payments</h1>
-    <div class="flex flex-wrap gap-4 mt-4 mb-4">
-    <% @quote.order.payments.each do |payment| %>
-        <div class="border border-gray-300 rounded-lg p-5">
-            <p>
-                <strong>Company:</strong>
-                <%= payment.company %>
-            </p>
-            <p>
-                <strong>Bank:</strong>
-                <%= payment.bank %>
-            </p>
-            <p>
-                <strong>Account:</strong>
-                <%= payment.account %>
-            </p>
-            <p>
-                <strong>Paid by:</strong>
-                <%= payment.paid_by.email.split("@").first %>
-            </p>
-            <p>
-                <strong>Paid from:</strong>
-                <%= payment.from_account %>
-            </p>
-            <p>
-                <strong>Amount:</strong>
-                <%=  number_to_currency(payment.amount, unit: currency_symbol_for(payment.currency)) %>
-            </p>
-            <p>
-                <strong>Notes:</strong>
-                <div class="border-1 border-black rounded-lg p-2 my-2 inline-block">
-                    <%= payment.body %>
-                </div>
-            </p>
+<% if @quote.order.quotes_submitted_by_id.nil? %>
+    <%= form_with(model: Item.new, url: order_quote_items_path(@quote.order, @quote), local: true) do |f| %>
+        <div class="flex gap-2 mt-2">
+            <%= f.text_field :item_name, placeholder: "Item name", class: "border p-1 rounded" %>
+            <%= f.number_field :price, placeholder: "Price", class: "border p-1 rounded", min: 1 %>
+            <%= f.select :currency, ["USD", "ZMW", "ZAR", "EUR"],
+            { selected: @quote.items.first&.currency }, class: "mt-1 block border border-gray-300 rounded-md p-2" %>
+            <%= f.submit "Add", class: "bg-green-500 text-white px-2 rounded" %>
         </div>
     <% end %>
-    </div>
 <% end %>
+<% if @quote.order.approved == "approved" %>
+<h1 class="font-semibold text-lg mt-6">GRVs / Delivery Notes</h1>
+    <% if @quote.order.payments.any? %>
+        <h1 class="font-semibold text-lg mt-6">Payments</h1>
+        <div class="flex flex-wrap gap-4 mt-4 mb-4">
+        <% @quote.order.payments.each do |payment| %>
+            <div class="border border-gray-300 rounded-lg p-5">
+                <p>
+                    <strong>Company:</strong>
+                    <%= payment.company %>
+                </p>
+                <p>
+                    <strong>Bank:</strong>
+                    <%= payment.bank %>
+                </p>
+                <p>
+                    <strong>Account:</strong>
+                    <%= payment.account %>
+                </p>
+                <p>
+                    <strong>Paid by:</strong>
+                    <%= payment.paid_by.email.split("@").first %>
+                </p>
+                <p>
+                    <strong>Paid from:</strong>
+                    <%= payment.from_account %>
+                </p>
+                <p>
+                    <strong>Amount:</strong>
+                    <%=  number_to_currency(payment.amount, unit: currency_symbol_for(payment.currency)) %>
+                </p>
+                <p>
+                    <strong>Notes:</strong>
+                    <div class="border-1 border-black rounded-lg p-2 my-2 inline-block">
+                        <%= payment.body %>
+                    </div>
+                </p>
+            </div>
+        <% end %>
+        </div>
+    <% end %>
+
+
+
+    <% if @delivery_notes.any? %>
+    <div class="flex flex-wrap gap-4 mt-4 mb-4">
+        <% @delivery_notes.each do |delivery_note| %>
+            <div class="border border-gray-300 rounded-lg p-5">
+                <p>
+                    <strong>received by:</strong>
+                    <%= delivery_note.recieved_by.email.split("@").first %>
+                    <strong>at:</strong>
+                    <%= delivery_note.created_at.strftime("%d/%m/%Y %H:%M") %>
+                </p>
+                <p>
+                    <strong>Company: </strong>
+                    <%= delivery_note.company %>
+                </p>
+                <p>
+                    <strong>Notes:</strong>
+                    <div class="border-1 border-black rounded-lg p-2 my-2 inline-block">
+                        <%= delivery_note.body %>
+                    </div>
+                </p>
+                <% goods = delivery_note.goods %>
+                <% if goods.any? %>
+                    <table class="table-auto border-collapse border border-gray-300 mb-3">
+                    <thead>
+                        <tr>
+                            <th class="border border-gray-300 px-2 py-1">Description</th>
+                            <th class="border border-gray-300 px-2 py-1">Quantity</th>
+                            <th class="border border-gray-300 px-2 py-1">Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% goods.each do |good| %>
+                            <tr>
+                                <td class="border border-gray-300 px-2 py-1"><%= good.description %></td>
+                                <td class="border border-gray-300 px-2 py-1"><%= good.quantity %></td>
+                                <td class="border border-gray-300 px-2 py-1"><%= good.location %></td>
+                            </tr>
+                        <% end %>
+                    </tbody>
+                    </table>
+                <% else %>
+                    <p>No items added yet.</p>
+                <% end %>
+                <p>
+                    <%= link_to "View", order_delivery_note_path(delivery_note.order, delivery_note), class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
+                </p>
+            </div>
+        <% end %>
+    </div>
+    <% else %>
+        <p>No GRVs for this quote yet.</p>
+    <% end %>
+<% end %>
+
 <div class="mt-4">
     <% if @quote.order.approved == "approved" %>
         <%= link_to "Add Proof of Payment", new_order_quote_payment_path(@quote.order, @quote), class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>

@@ -149,6 +149,55 @@
                     <% end %>
                     </div>
                 <% end %>
+
+                <% if order.delivery_notes.any? %>
+                    <h1 class="font-semibold text-lg mt-6">Delivery notes</h1>
+                    <div class="flex flex-wrap gap-4 mt-4 mb-4">
+                    <% order.delivery_notes.each do |delivery_note| %>
+                        <div class="border border-gray-300 rounded-lg p-5">
+                            <p>
+                                <strong>received by:</strong>
+                                <%= delivery_note.recieved_by.email.split("@").first %>
+                                <strong>at:</strong>
+                                <%= delivery_note.created_at.strftime("%d/%m/%Y %H:%M") %>
+                            </p>
+                            <p>
+                                <strong>Company: </strong>
+                                <%= delivery_note.company %>
+                            </p>
+                            <strong>Goods:</strong>
+                            <% goods = delivery_note.goods %>
+                            <% if goods.any? %>
+                                <table class="table-auto border-collapse border border-gray-300 mb-3">
+                                <thead>
+                                    <tr>
+                                        <th class="border border-gray-300 px-2 py-1">Description</th>
+                                        <th class="border border-gray-300 px-2 py-1">Quantity</th>
+                                        <th class="border border-gray-300 px-2 py-1">Location</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% goods.each do |good| %>
+                                        <tr>
+                                            <td class="border border-gray-300 px-2 py-1"><%= good.description %></td>
+                                            <td class="border border-gray-300 px-2 py-1"><%= good.quantity %></td>
+                                            <td class="border border-gray-300 px-2 py-1"><%= good.location %></td>
+                                        </tr>
+                                    <% end %>
+                                </tbody>
+                                </table>
+                            <% else %>
+                                <p class="mb-3">No items added yet.</p>
+                            <% end %>
+                        </div>
+                    <% end %>
+                    </div>
+                <% end %>
+                <% if @order.approved == "approved" %>
+                    <%= link_to "View PO", order_quote_path(@order, quote), class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded inline-block" %>
+                <% else %>
+                    <%= link_to "View Quote", order_quote_path(@order, quote), class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded inline-block" %>
+                <% end %>
             </div>
             <% end %>
         </div>
@@ -167,37 +216,6 @@
                     <%= button_to "Revise Order", revise_order_path(@order), method: :patch, class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
                     <%= button_to "Deny Order", deny_order_path(@order), method: :patch, class: "bg-red-500 text-white px-3 py-1 mt-4 rounded" %>
                 </div>
-            <% elsif order.approved != "denied" %>
-                <% if order.delivery_notes.any? %>
-                    <h1 class="font-semibold text-lg mt-6">Delivery notes</h1>
-                    <div class="flex flex-wrap gap-4 mt-4 mb-4">
-                    <% order.delivery_notes.each do |delivery_note| %>
-                        <div class="border border-gray-300 rounded-lg p-5">
-                            <p>
-                                <strong>received by:</strong>
-                                <%= delivery_note.recieved_by.email.split("@").first %>
-                                <strong>at:</strong>
-                                <%= delivery_note.created_at.strftime("%d/%m/%Y %H:%M") %>
-                            </p>
-                            <p>
-                                <strong>Company: </strong>
-                                <%= delivery_note.company %>
-                            </p>
-                            <p>
-                                <strong>Notes:</strong>
-                                <div class="border-1 border-black rounded-lg p-2 my-2 inline-block">
-                                    <%= delivery_note.body %>
-                                </div>
-                            </p>
-                            <p>
-                                <%= link_to "Go to Goods Receiving Voucher", order_delivery_note_path(order, delivery_note), class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
-                            </p>
-                        </div>
-                    <% end %>
-                    </div>
-                <% end %>
-                <%= link_to "Add Goods Recieving Voucher", new_order_delivery_note_path(@order), class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>
-
             <% end %>
 
             <% if order.approved == "denied" %>
