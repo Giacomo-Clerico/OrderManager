@@ -165,8 +165,10 @@ class OrdersController < ApplicationController
         # only assign if PO number is not already set
         next if quote.po_number.present?
 
+        buy_as = quote.buy_as
+
         # find the last PO with the same year prefix
-        last_po = Quote.where("po_number LIKE ?", "POMF#{current_year_suffix}%").order(:po_number).last
+        last_po = Quote.where("po_number LIKE ?", "PO#{buy_as}#{current_year_suffix}%").order(:po_number).last
 
         last_number = if last_po&.po_number.present?
           last_po.po_number[-4..].to_i  # last 4 digits
@@ -175,8 +177,7 @@ class OrdersController < ApplicationController
         end
 
         # build new PO
-        prefix = quote.buy_as # you can make this dynamic later if needed
-        new_po_number = "#{prefix}#{current_year_suffix}#{format("%04d", last_number + 1)}"
+        new_po_number = "PO#{buy_as}#{current_year_suffix}#{format("%04d", last_number + 1)}"
 
         quote.update!(po_number: new_po_number)
       end
