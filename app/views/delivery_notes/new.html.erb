@@ -1,5 +1,5 @@
 <h1>New GRV</h1>
-<%= form_with(model: [@order, @delivery_note]) do |form| %>
+<%= form_with model: @delivery_note do |form| %>
     <%if form.object.errors.any? %>
         <div>
             <% form.object.errors.full_messages.each do |message| %>
@@ -8,6 +8,7 @@
         </div>
     <%end%>
     <%= form.hidden_field :order_id %>
+    <%= form.hidden_field :po_number %>
 
     <div>
         <%= form.label :company %>
@@ -17,11 +18,6 @@
     <div>
         <%= form.label :body %>
         <%= form.rich_textarea :body %>
-    </div>
-
-    <div>
-        <%= form.label :po_number %>
-        <%= form.text_field :po_number, class: "border rounded p-2 w-full" %>
     </div>
 
     <%= form.submit "Save GRV", class: "bg-green-500 text-white px-3 py-2 mt-4 rounded" %>

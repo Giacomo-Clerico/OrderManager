@@ -47,7 +47,7 @@
     </tbody>
     </table>
 <% else %>
-    <p>No items added yet.</p>
+    <p>No goods added yet.</p>
 <% end %>
 <%= form_with(model: Good.new, url: order_delivery_note_goods_path(@delivery_note.order, @delivery_note), local: true) do |f| %>
     <div class="flex gap-2 mt-2">

@@ -88,7 +88,6 @@
     <% end %>
 <% end %>
 <% if @quote.order.approved == "approved" %>
-<h1 class="font-semibold text-lg mt-6">GRVs / Delivery Notes</h1>
     <% if @quote.order.payments.any? %>
         <h1 class="font-semibold text-lg mt-6">Payments</h1>
         <div class="flex flex-wrap gap-4 mt-4 mb-4">
@@ -132,6 +131,7 @@
 
 
     <% if @delivery_notes.any? %>
+    <h1 class="font-semibold text-lg mt-6">GRVs</h1>
     <div class="flex flex-wrap gap-4 mt-4 mb-4">
         <% @delivery_notes.each do |delivery_note| %>
             <div class="border border-gray-300 rounded-lg p-5">
@@ -174,7 +174,7 @@
                 <% else %>
                     <p>No items added yet.</p>
                 <% end %>
-                <p>
+                <p class="mt-3">
                     <%= link_to "View", order_delivery_note_path(delivery_note.order, delivery_note), class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
                 </p>
             </div>

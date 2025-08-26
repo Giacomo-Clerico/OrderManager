@@ -1,0 +1,10 @@
+<h1>Find Order by PO Number</h1>
+
+<%= form_with url: check_order_delivery_notes_path, method: :post, local: true do %>
+    <div>
+        <%= label_tag :po_number, "PO Number" %>
+        <%= text_field_tag :po_number, "PO",  class: "border rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    </div>
+
+    <%= submit_tag "Continue", class: "bg-green-500 text-white px-3 py-2 mt-4 rounded" %>
+<% end %>

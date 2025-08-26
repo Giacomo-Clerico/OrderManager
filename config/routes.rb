@@ -11,6 +11,12 @@ Rails.application.routes.draw do
   # post "/orders", to: "orders#create", as: :orders
   # patch "/orders/:id/check", to: "orders#check", as: :check_order
 
+  resources :delivery_notes do
+    collection do
+      get :find_order
+      post :check_order
+    end
+  end
   resources :orders do
     member do
       patch :check
