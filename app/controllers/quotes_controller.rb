@@ -12,6 +12,13 @@ class QuotesController < ApplicationController
   def create
     @quote = @order.quotes.new(quote_params)
     @quote.requested_by = current_user
+
+    order_buy_as = @order.quotes.first&.buy_as
+
+    if order_buy_as.present? && @quote.buy_as != order_buy_as
+      redirect_back(fallback_location: order_path(@order), alert: "Quote buy as must match the other quotes': #{@order.quotes.first.prefix_name}") and return
+    end
+
     if @quote.save
       redirect_to [ @order, @quote ], notice: "Quote created successfully"
     else

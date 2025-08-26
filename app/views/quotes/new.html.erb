@@ -20,7 +20,7 @@
 
     <div>
         <%= form.label :buy_as %>
-        <%= form.select :buy_as, Quote::PREFIXES.map {|code, name| [name, code]}, {}, class: "border rounded p-2" %>
+        <%= form.select :buy_as, Quote::PREFIXES.map {|code, name| [name, code]}, {selected: @order.quotes.first&.buy_as}, class: "border rounded p-2" %>
     </div>
     <div>
         <%= form.label :body %>
