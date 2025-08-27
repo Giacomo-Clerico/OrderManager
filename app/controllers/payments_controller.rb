@@ -10,7 +10,16 @@ class PaymentsController < ApplicationController
   end
 
   def new
-    @payment = @quote.payments.new
+    first_payment = @quote.payments.first
+    if first_payment.present?
+      @payment = @quote.payments.new(
+        bank: first_payment.bank,
+        account: first_payment.account,
+        from_account: first_payment.from_account
+      )
+    else
+      @payment = @quote.payments.new
+    end
   end
 
   def create
@@ -20,11 +29,14 @@ class PaymentsController < ApplicationController
 
     payment_currency = @quote.items.first&.currency
 
-    if payment_currency.present? && @payment.currency != payment_currency
-      flash.now[:alert] = "Payment currency must match the one in the quote's items' currency: #{payment_currency}"
-      render :new, status: :unprocessable_entity and return
+    @payment.currency = payment_currency if payment_currency.present?
+
+    if @payment.amount > helpers.remaining_pay(@quote)
+      redirect_to order_quote_path(@order, @quote), alert: "You cannot pay more than the remaining amount"
+      return  # important: stop execution
     end
 
+    @payment.company = @quote.company
     if @payment.save
       redirect_to order_quote_path(@order, @quote), notice: "Payment was successfully created."
     else

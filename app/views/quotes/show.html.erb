@@ -43,7 +43,6 @@
     <% end %>
 </div>
 
-<hr>
 
 <h2>Items:</h2>
 
@@ -86,17 +85,21 @@
             <%= f.submit "Add", class: "bg-green-500 text-white px-2 rounded" %>
         </div>
     <% end %>
+<% else %>
+    <p class="mt-2">
+        Amount to pay:
+        <%= remaining_pay(@quote) %>
+    </p>
 <% end %>
+
+
 <% if @quote.order.approved == "approved" %>
     <% if @quote.order.payments.any? %>
+        <hr class="my-4">
         <h1 class="font-semibold text-lg mt-6">Payments</h1>
         <div class="flex flex-wrap gap-4 mt-4 mb-4">
         <% @quote.order.payments.each do |payment| %>
             <div class="border border-gray-300 rounded-lg p-5">
-                <p>
-                    <strong>Company:</strong>
-                    <%= payment.company %>
-                </p>
                 <p>
                     <strong>Bank:</strong>
                     <%= payment.bank %>
@@ -129,8 +132,8 @@
     <% end %>
 
 
-
     <% if @delivery_notes.any? %>
+    <hr class="my-4">
     <h1 class="font-semibold text-lg mt-6">GRVs</h1>
     <div class="flex flex-wrap gap-4 mt-4 mb-4">
         <% @delivery_notes.each do |delivery_note| %>
@@ -140,10 +143,6 @@
                     <%= delivery_note.recieved_by.email.split("@").first %>
                     <strong>at:</strong>
                     <%= delivery_note.created_at.strftime("%d/%m/%Y %H:%M") %>
-                </p>
-                <p>
-                    <strong>Company: </strong>
-                    <%= delivery_note.company %>
                 </p>
                 <p>
                     <strong>Notes:</strong>
@@ -172,7 +171,7 @@
                     </tbody>
                     </table>
                 <% else %>
-                    <p>No items added yet.</p>
+                    <p>No goods added yet.</p>
                 <% end %>
                 <p class="mt-3">
                     <%= link_to "View", order_delivery_note_path(delivery_note.order, delivery_note), class: "bg-blue-500 text-white px-3 py-1 mt-4 rounded" %>
@@ -185,8 +184,10 @@
     <% end %>
 <% end %>
 
+<hr class="my-4">
+
 <div class="mt-4">
-    <% if @quote.order.approved == "approved" %>
+    <% if @quote.order.approved == "approved" && remaining_pay(@quote) > 0 %>
         <%= link_to "Add Proof of Payment", new_order_quote_payment_path(@quote.order, @quote), class: "bg-green-500 text-white px-3 py-1 mt-4 rounded" %>
     <% end %>
     <%= link_to "Back to Order", @order, class: "bg-gray-500 text-white px-3 py-1 rounded" %>
