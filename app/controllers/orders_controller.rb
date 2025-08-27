@@ -28,6 +28,8 @@ class OrdersController < ApplicationController
       return  # important: stop execution
     end
 
+    @order.checked!
+
     if @order.update_columns(checked_by_id: current_user.id, checked_at: Time.current, checked: true)
       redirect_to @order, notice: "Order checked successfully"
     else
@@ -41,6 +43,8 @@ class OrdersController < ApplicationController
       redirect_to @order, alert: "You are not authorized for technical approvals"
       return  # important: stop execution
     end
+
+    @order.refused!
 
     if @order.update_columns(checked_by_id: current_user.id, checked_at: Time.current, checked: false)
       redirect_to @order, notice: "Order refused successfully"
@@ -77,6 +81,8 @@ class OrdersController < ApplicationController
       return
     end
 
+    @order.quoted!
+
     if @order.update_columns(quotes_submitted_at: Time.current, quotes_submitted_by_id: current_user.id)
       redirect_to @order, notice: "Quotes submitted successfully"
     else
@@ -100,6 +106,9 @@ class OrdersController < ApplicationController
     end
 
     assign_po_numbers(@order)
+
+    @order.approved!
+
     if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "approved")
       redirect_to @order, notice: "Order approved successfully"
     else
@@ -113,6 +122,8 @@ class OrdersController < ApplicationController
       redirect_to @order, alert: "You are not authorized for denying orders"
       return  # important: stop execution
     end
+
+    @order.denied!
 
     if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "denied")
       redirect_to @order, notice: "Order denied successfully"
@@ -128,6 +139,8 @@ class OrdersController < ApplicationController
       return  # important: stop execution
     end
 
+    @order.revised!
+
     if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "revised", quotes_submitted_by_id: nil, quotes_submitted_at: nil)
       redirect_to @order, notice: "Order revised successfully"
     else
@@ -141,6 +154,8 @@ class OrdersController < ApplicationController
       redirect_to @order, alert: "You are not authorized for restoring orders"
       return  # important: stop execution
     end
+
+    @order.restored!
 
     if @order.update_columns(approved_by_id: current_user.id, approved_at: Time.current, approved: "revised")
       redirect_to @order, notice: "Order restored successfully"

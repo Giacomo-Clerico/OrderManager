@@ -1,7 +1,10 @@
 <% order = @order %>
 <div class="border-b border-gray-200 py-3">
-    <h2 class="text-xl font-bold"><%= order.name%></h2>
-    <div class="flex items-center flex-wrap justify-start  gap-x-4">
+    <h2 class="text-2xl font-bold"><%= order.name%></h2>
+    <p class="my-2 font-semibold">
+    <%= @order.status %>
+    </p>
+    <div class="">
         <p>Created by: <%= order.user.email.split("@").first %> at <%= order.created_at.strftime("%d/%m/%Y %H:%M") %></p>
         <% unless order.checked_at.nil? %>
             <% if order.checked %>
@@ -14,16 +17,14 @@
             <p>Quotes submitted by: <%= order.quotes_submitted_by.email.split("@").first %> at <%= order.quotes_submitted_at.strftime("%d/%m/%Y %H:%M") %></p>
 
         <% end %>
-    </div>
-    <% unless order.quotes_submitted_by_id.nil? %>
-        <p>Order status: 
+        <% unless order.quotes_submitted_by_id.nil? %>
         <% if order.approved.nil? %>
-            <span class="text-yellow-500">Pending</span>
         <% else %>
-            <%= order.approved.capitalize %> by <%= order.approved_by.email.split("@").first %> at <%= order.approved_at.strftime("%d/%m/%Y %H:%M") if order.approved_at %>
+            <%= order.approved.capitalize %> by: <%= order.approved_by.email.split("@").first %> at <%= order.approved_at.strftime("%d/%m/%Y %H:%M") if order.approved_at %>
         <% end %>
         </p>
     <% end %>
+    </div>
     <div class="my-5">
         <%= order.description %>
     </div>
