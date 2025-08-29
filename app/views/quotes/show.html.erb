@@ -55,7 +55,8 @@
         </tr>
     </thead>
     <tbody>
-        <% @items.each do |item| %>
+        <% items = @quote.po_number.nil? ? @items : @items.selected%>
+        <% items.each do |item| %>
             <tr>
                 <td class="border border-gray-300 px-2 py-1"><%= item.item_name %></td>
                 <td class="border border-gray-300 px-2 py-1"><%= number_to_currency(item.price, unit: currency_symbol_for(item.currency)) %></td>
@@ -86,19 +87,21 @@
         </div>
     <% end %>
 <% else %>
+    <% if @quote.order.approved? %>
     <p class="mt-2">
         Amount to pay:
-        <%= remaining_pay(@quote) %>
+        <%= number_to_currency(remaining_pay(@quote), unit: currency_symbol_for(@quote.items.first.currency)) %>
     </p>
+    <% end %>
 <% end %>
 
 
 <% if @quote.order.approved == "approved" %>
-    <% if @quote.order.payments.any? %>
+    <% if @quote.payments.any? %>
         <hr class="my-4">
         <h1 class="font-semibold text-lg mt-6">Payments</h1>
         <div class="flex flex-wrap gap-4 mt-4 mb-4">
-        <% @quote.order.payments.each do |payment| %>
+        <% @quote.payments.each do |payment| %>
             <div class="border border-gray-300 rounded-lg p-5">
                 <p>
                     <strong>Bank:</strong>

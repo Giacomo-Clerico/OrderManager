@@ -22,6 +22,22 @@
         <% else %>
             <%= order.approved.capitalize %> by: <%= order.approved_by.email.split("@").first %> at <%= order.approved_at.strftime("%d/%m/%Y %H:%M") if order.approved_at %>
         <% end %>
+        <% if order.approved? %>
+            <p>
+                Remaining to pay:
+                <%= total_remaining(@order) %>
+                <% @order.quotes.each do |quote| %>
+                    <% if remaining_pay(quote) > 0 %>
+                        <div>
+                            <strong>PO number:</strong>
+                            <%= link_to quote.po_number, order_quote_path(@order, quote) %>
+                            <strong>Amount:</strong>
+                            <%= number_to_currency(remaining_pay(quote), unit: currency_symbol_for(quote.items.first.currency)) %>
+                        </div>
+                    <% end %>
+                <% end %>
+            </p>
+        <% end %>
         </p>
     <% end %>
     </div>
@@ -117,10 +133,10 @@
                     <p>No items added yet.</p>
                 <% end %>
 
-                <% if order.payments.any? %>
+                <% if quote.payments.any? %>
                     <h1 class="font-semibold text-lg mt-6">Payments</h1>
                     <div class="flex flex-wrap gap-4 mt-4 mb-4">
-                    <% order.payments.each do |payment| %>
+                    <% quote.payments.each do |payment| %>
                         <div class="border border-gray-300 rounded-lg p-5">
                             <p>
                                 <strong>Company:</strong>

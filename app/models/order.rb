@@ -11,5 +11,5 @@ class Order < ApplicationRecord
   validates :name, presence: true
   validates :description, presence: true
 
-  enum :status, %i[requested checked refused quoted approved revised restored denied]
+  enum :status, %i[requested checked refused quoted approved revised restored denied paid]
 end

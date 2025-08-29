@@ -36,11 +36,20 @@ class PaymentsController < ApplicationController
       return  # important: stop execution
     end
 
+    if helpers.total_remaining(@order) == 0
+      @order.paid!
+    end
+
     @payment.company = @quote.company
     if @payment.save
+      @order.reload
+      if helpers.total_remaining(@order) <= 0
+        @order.paid!  # updates enum + saves
+      end
       redirect_to order_quote_path(@order, @quote), notice: "Payment was successfully created."
     else
-      render :new, notice: "Failed to create payment"
+      flash.now[:alert] = "Failed to create payment"
+      render :new
     end
   end
 
