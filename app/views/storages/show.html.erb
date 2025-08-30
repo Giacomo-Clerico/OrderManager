@@ -1,0 +1,22 @@
+<h1 class="text-2xl font-bold mb-6">Storage Details</h1>
+
+<div class="space-y-3">
+    <p>
+        <span class="font-semibold">Name:</span>
+        <%= @storage.name %>
+    </p>
+
+    <p>
+        <span class="font-semibold">Abbreviation:</span>
+        <%= @storage.abbreviation %>
+    </p>
+    </div>
+
+    <div class="mt-6 flex gap-4">
+    <%= link_to "Back to List", storages_path, class: "px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700" %>
+
+    <% if %w[manager director].include?(current_user.user_type) %>
+        <%= link_to "Edit", edit_storage_path(@storage), class: "px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600" %>
+        <%= button_to "Delete", storage_path(@storage), method: :delete, data: { confirm: "Are you sure?" }, class: "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700" %>
+    <% end %>
+</div>

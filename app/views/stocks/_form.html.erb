@@ -1,0 +1,44 @@
+<%= form_with(model: stock, class: "space-y-4") do |f| %>
+    <% if stock.errors.any? %>
+        <div class="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
+        <h2 class="font-bold"><%= pluralize(stock.errors.count, "error") %> prohibited this stock from being saved:</h2>
+        <ul class="list-disc pl-5">
+            <% stock.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+            <% end %>
+        </ul>
+        </div>
+    <% end %>
+
+    <!-- Product -->
+    <div>
+        <%= f.label :product_id, "Product", class: "block font-medium mb-1" %>
+        <%= f.collection_select :product_id, Product.all, :id, :code, { prompt: "Select a product" }, class: "w-full p-2 border rounded-lg" %>
+    </div>
+
+    <!-- Quantity -->
+    <div>
+        <%= f.label :quantity, class: "block font-medium mb-1" %>
+        <%= f.number_field :quantity, class: "w-full p-2 border rounded-lg" %>
+    </div>
+
+    <!-- Storage Type -->
+    <div>
+        <%= f.label :storage_type, "Storage Type", class: "block font-medium mb-1" %>
+        <%= f.select :storage_type, [["Storage", "Storage"]], { prompt: "Select storage type" }, class: "w-full p-2 border rounded-lg" %>
+    </div>
+
+    <!-- Storage ID (depends on type) -->
+    <div>
+        <%= f.label :storage_id, "Storage", class: "block font-medium mb-1" %>
+        <% if stock.storage_type == "Storage" || stock.new_record? %>
+        <%= f.collection_select :storage_id, Storage.all, :id, :name, { prompt: "Select a storage" }, class: "w-full p-2 border rounded-lg" %>
+        <% else %>
+        <%= f.text_field :storage_id, class: "w-full p-2 border rounded-lg", placeholder: "Enter ID of #{stock.storage_type}" %>
+        <% end %>
+    </div>
+
+    <div>
+        <%= f.submit class: "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700" %>
+    </div>
+<% end %>

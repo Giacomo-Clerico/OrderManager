@@ -1,0 +1,41 @@
+<h1 class="text-xl font-bold mb-4">Edit Product</h1>
+
+<%= form_with(model: @product, local: true, class: "space-y-4") do |f| %>
+    <% if @product.errors.any? %>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <h2 class="font-semibold">
+            <%= pluralize(@product.errors.count, "error") %> prohibited this product from being saved:
+        </h2>
+        <ul class="list-disc ml-6">
+            <% @product.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+            <% end %>
+        </ul>
+        </div>
+    <% end %>
+
+    <div>
+        <%= f.label :code, class: "block font-medium" %>
+        <%= f.text_field :code, class: "w-full border rounded px-3 py-2" %>
+    </div>
+
+    <div>
+        <%= f.label :desctription, class: "block font-medium" %>
+        <%= f.rich_text_area :desctription, class: "w-full border rounded px-3 py-2" %>
+    </div>
+
+    <div>
+        <%= f.label :category, class: "block font-medium" %>
+        <%= f.select :category, options_for_select(@categories, @product.category), {}, class: " border rounded px-3 py-2" %>
+    </div>
+
+    <div>
+        <%= f.label :product_type, class: "block font-medium" %>
+        <%= f.text_field :product_type, class: "w-full border rounded px-3 py-2" %>
+    </div>
+
+    <div class="flex space-x-4">
+        <%= f.submit "Update Product", class: "px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600" %>
+        <%= link_to "Cancel", products_path, class: "px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" %>
+    </div>
+<% end %>

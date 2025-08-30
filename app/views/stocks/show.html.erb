@@ -1,0 +1,49 @@
+<h1 class="text-2xl font-bold mb-6">Stock Details</h1>
+
+<div class="space-y-3">
+    <p>
+        <span class="font-semibold">Product:</span>
+        <%= @stock.product.code %>
+    </p>
+    <p>
+        <span class="font-semibold">Description:</span>
+        <%= @stock.product.desctription %>
+    </p>
+    <p>
+        <span class="font-semibold">Type:</span>
+        <%= @stock.product.product_type %>
+    </p>
+    <p>
+        <span class="font-semibold">Category:</span>
+        <%= @stock.product.category %>
+    </p>
+
+
+    <p>
+        <span class="font-semibold">Quantity:</span>
+        <%= @stock.quantity %>
+    </p>
+
+    <p>
+        <span class="font-semibold">Storage Type:</span>
+        <%= @stock.storage_type %>
+    </p>
+
+    <p>
+        <span class="font-semibold">Storage:</span>
+        <% if @stock.storage.present? %>
+        <%= @stock.storage.try(:name) || "##{@stock.storage_id}" %>
+        <% else %>
+        Not assigned
+        <% end %>
+    </p>
+    </div>
+
+    <div class="mt-6 flex gap-4">
+    <%= link_to "Back to List", stocks_path, class: "px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700" %>
+
+    <% if %w[manager director].include?(current_user.user_type) %>
+        <%= link_to "Edit", edit_stock_path(@stock), class: "px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600" %>
+        <%= button_to "Delete", stock_path(@stock), method: :delete, data: { confirm: "Are you sure?" }, class: "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700" %>
+    <% end %>
+</div>

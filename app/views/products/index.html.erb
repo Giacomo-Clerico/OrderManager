@@ -1,0 +1,33 @@
+<h1 class="text-2xl font-bold mb-4">Products</h1>
+
+<div class="mt-4 mb-4">
+<%= link_to "New Product", new_product_path, class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" %>
+</div>
+<table class="min-w-full border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+    <thead>
+        <tr class="bg-gray-100">
+        <th class="border border-gray-300 px-4 py-2 text-left">Code</th>
+        <th class="border border-gray-300 px-4 py-2 text-left">Description</th>
+        <th class="border border-gray-300 px-4 py-2 text-left">Category</th>
+        <th class="border border-gray-300 px-4 py-2 text-left">Type</th>
+        <th class="border border-gray-300 px-4 py-2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% @products.each do |product| %>
+        <tr>
+            <td class="border border-gray-300 px-4 py-2"><%= link_to product.code, product_path(product) %></td>
+            <td class="border border-gray-300 px-4 py-2">
+            <%= product.desctription.body.to_s.html_safe if product.desctription.present? %>
+            </td>
+            <td class="border border-gray-300 px-4 py-2"><%= product.category %></td>
+            <td class="border border-gray-300 px-4 py-2"><%= product.product_type %></td>
+            <td class="border border-gray-300 px-4 py-2 space-x-2">
+            <%= link_to "Edit", edit_product_path(product), class: "text-green-500 hover:underline" %>
+            <%= button_to "Delete", product_path(product), method: :delete, data: { confirm: "Are you sure?" }, class: "text-red-500 hover:underline" %>
+            </td>
+        </tr>
+        <% end %>
+    </tbody>
+</table>
+

@@ -17,6 +17,13 @@ Rails.application.routes.draw do
       post :check_order
     end
   end
+  resources :products
+  resources :storages
+  resources :stocks do
+    collection do
+      post :add
+    end
+  end
   resources :orders do
     member do
       patch :check
