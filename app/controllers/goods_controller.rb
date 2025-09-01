@@ -1,7 +1,8 @@
 class GoodsController < ApplicationController
   before_action :set_order
   before_action :set_delivery_note
-
+  before_action :require_manager_or_director, only: [ :destroy ]
+  before_action :set_good, only: [ :destroy ]
   def new
     @good = @delivery_note.goods.new
   end
@@ -9,10 +10,30 @@ class GoodsController < ApplicationController
   def create
     @good = @delivery_note.goods.new(good_params)
     if @good.save
-      redirect_back(fallback_location: order_path(@delivery_note))
+      Stock.add!(
+        product_id: @good.product_id,
+        storage_id: @good.storage_id,
+        storage_type: @good.storage_type,
+        quantity: @good.quantity
+      )
+      redirect_to [ @delivery_note.order, @delivery_note ], notice: "Good added and stock updated."
     else
-      redirect_back(fallback_location: order_path(@delivery_note), alert: "Good could not be added")
+      Rails.logger.error "Failed to save Good: #{@good.errors.full_messages.to_sentence}"
+      redirect_to [ @delivery_note.order, @delivery_note ], alert: "Failed to add Good: #{@good.errors.full_messages.to_sentence}"
     end
+  end
+
+  def destroy
+    # Subtract quantity from stock before destroying
+    Stock.add!(
+      product_id: @good.product_id,
+      storage_id: @good.storage_id,
+      storage_type: @good.storage_type,
+      quantity: -@good.quantity  # subtract instead of add
+    )
+
+    @good.destroy
+    redirect_to [ @delivery_note.order, @delivery_note ], notice: "Good deleted and stock updated."
   end
 
   private
@@ -26,6 +47,16 @@ class GoodsController < ApplicationController
   end
 
   def good_params
-    params.require(:good).permit(:description, :quantity, :location)
+    params.require(:good).permit(:quantity, :location, :storage_id, :product_id, :storage_type)
   end
+end
+
+def require_manager_or_director
+  unless %w[manager director].include?(current_user.user_type)
+    redirect_to root_path, alert: "You are not authorized to perform this action."
+  end
+end
+
+def set_good
+  @good = @delivery_note.goods.find(params[:id])
 end

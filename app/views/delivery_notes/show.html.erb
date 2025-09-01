@@ -39,10 +39,12 @@
     <tbody>
         <% @goods.each do |good| %>
             <tr>
-                <td class="border border-gray-300 px-2 py-1"><%= good.description %></td>
+                <td class="border border-gray-300 px-2 py-1"><%= good.product.code %></td>
                 <td class="border border-gray-300 px-2 py-1"><%= good.quantity %></td>
                 <td class="border border-gray-300 px-2 py-1"><%= good.location %></td>
-            </tr>
+                <td class="border border-gray-300 px-2 py-1">
+                    <%= button_to "Remove", order_delivery_note_good_path(@delivery_note.order, @delivery_note, good), method: :delete, data: { confirm: "Are you sure?" }, class: "bg-red-500 text-white px-2 rounded" %>
+                </tr>
         <% end %>
     </tbody>
     </table>
@@ -51,8 +53,10 @@
 <% end %>
 <%= form_with(model: Good.new, url: order_delivery_note_goods_path(@delivery_note.order, @delivery_note), local: true) do |f| %>
     <div class="flex gap-2 mt-2">
-        <%= f.text_field :description, placeholder: "description", class: "border p-1 rounded" %>
-        <%= f.text_field :location, placeholder: "location", class: "border p-1 rounded" %>
+        <%= f.collection_select :product_id, Product.all, :id, :code, prompt: "Select product", class: "border p-1 rounded" %>
+        <%= f.collection_select :storage_id, Storage.all, :id, :name, prompt: "Select storage", class: "border p-1 rounded" %>
+        <%= f.hidden_field :storage_type, value: "Storage" %>
+        <%= f.text_field :location, placeholder: "Location", class: "border p-1 rounded" %>
         <%= f.number_field :quantity, placeholder: "Quantity", class: "border p-1 rounded", min: 1 %>
         <%= f.submit "Add", class: "bg-green-500 text-white px-2 rounded" %>
     </div>

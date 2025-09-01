@@ -1,5 +1,6 @@
 class Good < ApplicationRecord
   belongs_to :delivery_note
-  validates :description, presence: true
+  belongs_to :product
+  belongs_to :storage, polymorphic: true
   validates :quantity, presence: true
 end

@@ -19,24 +19,12 @@ class StocksController < ApplicationController
     end
   end
   def add
-    @stock = Stock.find_by(product_id: params[:product_id], storage_id: params[:storage_id], storage_type: params[:storage_type])
-
-    product = Product.find_by(id: params[:product_id])
-    unless product
-      redirect_to stocks_path, alert: "Invalid product ID" and return
-    end
-
-    if @stock
-      @stock.quantity += params[:quantity].to_i
-    else
-      @stock = Stock.new(product_id: params[:product_id], storage_id: params[:storage_id], storage_type: params[:storage_type], quantity: params[:quantity])
-    end
-    if @stock.save
-      redirect_to stocks_path, notice: "Stock was successfully added."
-    else
-      Rails.logger.error @stock.errors.full_messages.to_sentence
-      redirect_to stocks_path, alert: "Failed to add stock: #{@stock.errors.full_messages.to_sentence}"
-    end
+    Stock.add!(
+      product_id: params[:product_id],
+      storage_id: params[:storage_id],
+      storage_type: params[:storage_type],
+      quantity: params[:quantity])
+    redirect_to stocks_path, notice: "Stock updated!"
   end
   def edit
     @stock = Stock.find(params[:id])

@@ -188,7 +188,7 @@
                                 <table class="table-auto border-collapse border border-gray-300 mb-3">
                                 <thead>
                                     <tr>
-                                        <th class="border border-gray-300 px-2 py-1">Description</th>
+                                        <th class="border border-gray-300 px-2 py-1">Product Code</th>
                                         <th class="border border-gray-300 px-2 py-1">Quantity</th>
                                         <th class="border border-gray-300 px-2 py-1">Location</th>
                                     </tr>
@@ -196,7 +196,7 @@
                                 <tbody>
                                     <% goods.each do |good| %>
                                         <tr>
-                                            <td class="border border-gray-300 px-2 py-1"><%= good.description %></td>
+                                            <td class="border border-gray-300 px-2 py-1"><%= good.product.code %></td>
                                             <td class="border border-gray-300 px-2 py-1"><%= good.quantity %></td>
                                             <td class="border border-gray-300 px-2 py-1"><%= good.location %></td>
                                         </tr>

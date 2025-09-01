@@ -19,11 +19,7 @@ Rails.application.routes.draw do
   end
   resources :products
   resources :storages
-  resources :stocks do
-    collection do
-      post :add
-    end
-  end
+  resources :stocks
   resources :orders do
     member do
       patch :check
