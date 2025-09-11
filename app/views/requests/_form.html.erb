@@ -1,0 +1,15 @@
+<%= form_with(model: Request.new, url: order_requests_path(@order), local: true) do |f| %>
+    <div class="mb-2">
+        <%= f.label :product_id, "Product" %><br>
+        <%= f.collection_select :product_id, Product.all, :id, :code, prompt: "Select product", class: "border p-1 rounded" %>
+    </div>
+
+    <div class="mb-2">
+        <%= f.label :quantity %><br>
+        <%= f.number_field :quantity, class: "border p-1 rounded", min: 1 %>
+    </div>
+
+    <div>
+        <%= f.submit "Add Request", class: "bg-blue-500 text-white px-3 py-1 rounded" %>
+    </div>
+<% end %>

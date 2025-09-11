@@ -3,5 +3,6 @@ class Product < ApplicationRecord
   validates :category, presence: true, inclusion: { in: CATEGORIES }
   validates :code, presence: true
   has_many :stocks
+  has_many :requests
   has_rich_text :desctription
 end
