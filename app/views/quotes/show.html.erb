@@ -166,7 +166,7 @@
                     <tbody>
                         <% goods.each do |good| %>
                             <tr>
-                                <td class="border border-gray-300 px-2 py-1"><%= good.description %></td>
+                                <td class="border border-gray-300 px-2 py-1"><%= link_to good.product.code, good.product %></td>
                                 <td class="border border-gray-300 px-2 py-1"><%= good.quantity %></td>
                                 <td class="border border-gray-300 px-2 py-1"><%= good.location %></td>
                             </tr>
