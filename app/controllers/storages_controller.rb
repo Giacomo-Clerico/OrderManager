@@ -7,6 +7,7 @@ class StoragesController < ApplicationController
     @storages = Storage.all
   end
   def show
+    @stocks = Stock.where(storage_id: @storage.id).includes(:product)
   end
   def new
     @storage = Storage.new
