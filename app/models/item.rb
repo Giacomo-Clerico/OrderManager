@@ -1,6 +1,7 @@
 class Item < ApplicationRecord
   belongs_to :quote
-  validates :item_name, :price, presence: true
+  belongs_to :product
+  validates :price, presence: true
 
   scope :selected, -> { where(selected: true) }
 end

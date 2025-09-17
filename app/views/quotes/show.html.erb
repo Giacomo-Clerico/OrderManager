@@ -50,7 +50,7 @@
     <table class="table-auto border-collapse border border-gray-300">
     <thead>
         <tr>
-            <th class="border border-gray-300 px-2 py-1">Name</th>
+            <th class="border border-gray-300 px-2 py-1">Product Code</th>
             <th class="border border-gray-300 px-2 py-1">Price</th>
         </tr>
     </thead>
@@ -58,7 +58,7 @@
         <% items = @quote.po_number.nil? ? @items : @items.selected%>
         <% items.each do |item| %>
             <tr>
-                <td class="border border-gray-300 px-2 py-1"><%= item.item_name %></td>
+                <td class="border border-gray-300 px-2 py-1"><%= item.product.code %></td>
                 <td class="border border-gray-300 px-2 py-1"><%= number_to_currency(item.price, unit: currency_symbol_for(item.currency)) %></td>
                 <% if @order.quotes_submitted_by.blank? %>
                 <td class="border border-gray-300 px-2 py-1">
@@ -79,7 +79,7 @@
 <% if @quote.order.quotes_submitted_by_id.nil? %>
     <%= form_with(model: Item.new, url: order_quote_items_path(@quote.order, @quote), local: true) do |f| %>
         <div class="flex gap-2 mt-2">
-            <%= f.text_field :item_name, placeholder: "Item name", class: "border p-1 rounded" %>
+            <%= f.collection_select :product_id, Product.all, :id, :code, prompt: "Select product", class: "border p-1 rounded" %>
             <%= f.number_field :price, placeholder: "Price", class: "border p-1 rounded", min: 1 %>
             <%= f.select :currency, ["USD", "ZMW", "ZAR", "EUR"],
             { selected: @quote.items.first&.currency }, class: "mt-1 block border border-gray-300 rounded-md p-2" %>

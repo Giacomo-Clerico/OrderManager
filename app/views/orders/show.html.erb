@@ -115,7 +115,7 @@
                     <table class="table-auto border-collapse border border-gray-300">
                     <thead>
                         <tr>
-                            <th class="border border-gray-300 px-2 py-1">Name</th>
+                            <th class="border border-gray-300 px-2 py-1">Product Code</th>
                             <th class="border border-gray-300 px-2 py-1">Price</th>
                             <th class="border border-gray-300 px-2 py-1">
                                 Price (Currency)
@@ -136,7 +136,7 @@
                         <% items = order.approved == "approved" ? quote.items.where(selected: true).order(:id) : quote.items.order(:id)  %>
                         <% items.each do |item| %>
                             <tr>
-                                <td class="border border-gray-300 px-2 py-1"><%= item.item_name %></td>
+                                <td class="border border-gray-300 px-2 py-1"><%= item.product.code %></td>
                                 <td class="border border-gray-300 px-2 py-1"><%= number_to_currency(item.price, unit: currency_symbol_for(item.currency)) %></td>
                                 <td class="border border-gray-300 px-2 py-1 price-cell"  data-price="<%= item.price %>" data-currency="<%= item.currency %>">
                                     <%= number_to_currency(item.price, unit: item.currency) %>

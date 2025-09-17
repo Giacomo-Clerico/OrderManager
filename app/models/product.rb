@@ -4,5 +4,6 @@ class Product < ApplicationRecord
   validates :code, presence: true
   has_many :stocks
   has_many :requests
+  has_many :items
   has_rich_text :desctription
 end
