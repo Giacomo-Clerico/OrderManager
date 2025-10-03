@@ -1,0 +1,60 @@
+<h1 class="text-2xl font-bold mb-4">Manual Stock Entries</h1>
+
+<!-- Filters -->
+<div class="mb-6 flex flex-wrap gap-3 items-end">
+<%= form_with url: manual_entries_path, method: :get, local: true, class: "flex flex-wrap gap-3" do %>
+    <!-- Creator -->
+    <div>
+    <%= label_tag :user_id, "User", class: "block text-sm font-medium text-gray-700" %>
+    <%= select_tag :user_id, options_for_select([["All users",""]] + @users.map { |u| [u.email.split("@").first, u.id] }, params[:user_id]),
+        class: "rounded-md border-gray-300 shadow-sm sm:text-sm px-3 py-2" %>
+    </div>
+
+    <!-- Product -->
+    <div>
+    <%= label_tag :product_id, "Product", class: "block text-sm font-medium text-gray-700" %>
+    <%= select_tag :product_id, options_for_select([["All products",""]] + @products.map { |p| [p.code, p.id] }, params[:product_id]),
+        class: "rounded-md border-gray-300 shadow-sm sm:text-sm px-3 py-2" %>
+    </div>
+
+    <!-- Storage -->
+    <div>
+    <%= label_tag :storage_id, "Storage", class: "block text-sm font-medium text-gray-700" %>
+    <%= select_tag :storage_id, options_for_select([["All storages",""]] + @storages.map { |s| [s.abbreviation, s.id] }, params[:storage_id]),
+        class: "rounded-md border-gray-300 shadow-sm sm:text-sm px-3 py-2" %>
+    </div>
+
+    <!-- Submit -->
+    <div>
+    <%= submit_tag "Filter", class: "px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500" %>
+    </div>
+<% end %>
+</div>
+
+<!-- Table -->
+<table class="min-w-full border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+<thead>
+    <tr class="bg-gray-100">
+    <th class="border border-gray-300 px-4 py-2">ID</th>
+    <th class="border border-gray-300 px-4 py-2">Creator</th>
+    <th class="border border-gray-300 px-4 py-2">Product</th>
+    <th class="border border-gray-300 px-4 py-2">Storage</th>
+    <th class="border border-gray-300 px-4 py-2">Location</th>
+    <th class="border border-gray-300 px-4 py-2">Quantity</th>
+    <th class="border border-gray-300 px-4 py-2">Created At</th>
+    </tr>
+</thead>
+<tbody>
+    <% @manual_entries.each do |entry| %>
+    <tr>
+        <td class="border border-gray-300 px-4 py-2"><%= entry.id %></td>
+        <td class="border border-gray-300 px-4 py-2"><%= entry.user&.email.split("@").first %></td>
+        <td class="border border-gray-300 px-4 py-2"><%= entry.product&.code %></td>
+        <td class="border border-gray-300 px-4 py-2"><%= entry.storage&.abbreviation %></td>
+        <td class="border border-gray-300 px-4 py-2"><%= entry.location %></td>
+        <td class="border border-gray-300 px-4 py-2"><%= entry.quantity %></td>
+        <td class="border border-gray-300 px-4 py-2"><%= l(entry.created_at, format: :short) %></td>
+    </tr>
+    <% end %>
+</tbody>
+</table>

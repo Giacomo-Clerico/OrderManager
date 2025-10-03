@@ -3,6 +3,30 @@ class ManualEntriesController < ApplicationController
     @manual_entry = ManualEntry.new
   end
 
+  def index
+    @manual_entries = ManualEntry.includes(:user, :product, :storage).all
+
+    # Filtering
+    if params[:creator_id].present?
+      @manual_entries = @manual_entries.where(user_id: params[:creator_id])
+    end
+
+    if params[:product_id].present?
+      @manual_entries = @manual_entries.where(product_id: params[:product_id])
+    end
+
+    if params[:storage_id].present?
+      @manual_entries = @manual_entries.where(storage_id: params[:storage_id])
+    end
+
+    # For filter dropdowns
+    @users = User.all
+    @products = Product.all
+    @storages = Storage.all
+
+    @manual_entries = @manual_entries.order(created_at: :desc)
+  end
+
   def create
     @manual_entry = ManualEntry.new(manual_entry_params.merge(user: current_user))
     if @manual_entry.save
