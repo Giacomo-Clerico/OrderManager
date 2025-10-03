@@ -18,7 +18,7 @@
 
     <div>
         <strong>Description:</strong>
-        <div class="prose max-w-none border rounded p-3 bg-gray-50">
+        <div class="prose border rounded p-3 bg-gray-50 inline-block">
         <%= @product.desctription %>
         </div>
     </div>
@@ -29,3 +29,23 @@
     <%= link_to "Back", products_path, class: "px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" %>
     <%= button_to "Delete", product_path(@product), method: :delete, data: { confirm: "Are you sure?" }, class: "px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" %>
 </div>
+<table class="table-auto border-collapse border border-gray-400 mt-4">
+<% @locations = @product.stocks %>
+<thead>
+    <tr class="bg-gray-200">
+    <th class="border border-gray-400 px-4 py-2">Location</th>
+    <th class="border border-gray-400 px-4 py-2">Quantity</th>
+    <th class="border border-gray-400 px-4 py-2">Last updated at</th>
+    </tr>
+</thead>
+<tbody>
+    <% @locations.each do |stock| %>
+    <tr>
+        <% text = [stock.storage&.abbreviation, stock.location].compact.join(" ") %>
+        <td class="border border-gray-400 px-4 py-2"><%= stock.storage ? link_to(text, storage_path(stock.storage)) : text %></td>
+        <td class="border border-gray-400 px-4 py-2"><%= stock.quantity %></td>
+        <td class="border border-gray-400 px-4 py-2"><%= l(stock.updated_at, format: :short) %></td>
+    </tr>
+    <% end %>
+</tbody>
+</table>

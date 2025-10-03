@@ -4,7 +4,27 @@ class ProductsController < ApplicationController
   before_action :require_manager_or_director, except: [ :index ]
 
   def index
+    @types = Product.distinct.pluck(:product_type)
+    @categories = Product.distinct.pluck(:category) # new
+
     @products = Product.all
+
+    if params[:query].present?
+      q = "%#{params[:query]}%"
+      @products = @products.joins(
+        "LEFT JOIN action_text_rich_texts ON action_text_rich_texts.record_type = 'Product' AND action_text_rich_texts.record_id = products.id AND action_text_rich_texts.name = 'desctription'"
+      ).where("products.code ILIKE :q OR action_text_rich_texts.body ILIKE :q", q: q)
+    end
+
+    if params[:type].present?
+      @products = @products.where(product_type: params[:type])
+    end
+
+    if params[:category].present?
+      @products = @products.where(category: params[:category])
+    end
+
+    @products = @products.order(:code).limit(50)
   end
 
   def show

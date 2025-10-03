@@ -14,6 +14,7 @@ class GoodsController < ApplicationController
         product_id: @good.product_id,
         storage_id: @good.storage_id,
         storage_type: @good.storage_type,
+        location: @good.location,
         quantity: @good.quantity
       )
       redirect_to [ @delivery_note.order, @delivery_note ], notice: "Good added and stock updated."
@@ -29,6 +30,7 @@ class GoodsController < ApplicationController
       product_id: @good.product_id,
       storage_id: @good.storage_id,
       storage_type: @good.storage_type,
+      location: @good.location,
       quantity: -@good.quantity  # subtract instead of add
     )
 

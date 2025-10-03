@@ -29,6 +29,7 @@
     <tr class="bg-gray-200">
     <th class="border border-gray-400 px-4 py-2">Product</th>
     <th class="border border-gray-400 px-4 py-2">Quantity</th>
+    <th class="border border-gray-400 px-4 py-2">Location</th>
     <th class="border border-gray-400 px-4 py-2">Last updated at</th>
     </tr>
 </thead>
@@ -37,6 +38,7 @@
     <tr>
         <td class="border border-gray-400 px-4 py-2"><%= stock.product&.code || "N/A" %></td>
         <td class="border border-gray-400 px-4 py-2"><%= stock.quantity %></td>
+        <td class="border border-gray-400 px-4 py-2"><%= stock.location %></td>
         <td class="border border-gray-400 px-4 py-2"><%= l(stock.updated_at, format: :short) %></td>
     </tr>
     <% end %>

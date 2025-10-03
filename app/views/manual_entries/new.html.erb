@@ -1,0 +1,35 @@
+<h1 class="text-2xl font-bold mb-6">New Manual Stock Entry</h1>
+
+<%= form_with(model: @manual_entry, local: true, class: "space-y-6 max-w-lg") do |f| %>
+<div>
+    <%= f.label :product_id, "Product", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.collection_select :product_id, Product.all, :id, :code,
+        { prompt: "Select a product" },
+        { class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+</div>
+
+<div>
+    <%= f.label :storage_id, "Storage", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.collection_select :storage_id, Storage.all, :id, :abbreviation,
+        { prompt: "Select a storage" },
+        { class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+    <%= f.hidden_field :storage_type, value: "Storage" %>
+</div>
+
+<div>
+    <%= f.label :location, class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :location,
+        class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+</div>
+
+<div>
+    <%= f.label :quantity, class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.number_field :quantity,
+        class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+</div>
+
+<div>
+    <%= f.submit "Add Stock",
+        class: "inline-flex justify-center rounded-lg bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+</div>
+<% end %>
