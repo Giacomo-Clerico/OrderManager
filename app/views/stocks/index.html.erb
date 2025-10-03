@@ -1,4 +1,16 @@
 <h1 class="text-2xl font-bold mb-4">Stocks</h1>
+<h3>Import Stock JSON</h3>
+
+<div class="mb-6">
+    <h3 class="text-lg font-semibold mb-2">Import Stock JSON</h3>
+
+    <%= form_with url: import_json_stocks_path, method: :post, local: true, multipart: true, class: "flex items-center space-x-4" do |form| %>
+        <%= form.file_field :file, accept: 'application/json', class: "block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" %>
+        <%= form.submit "Import JSON", class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition" %>
+    <% end %>
+</div>
+
+
 <% if %w[manager director].include?(current_user.user_type) %>
     <div class="mb-4">
         <%= link_to "New Stock", new_stock_path, class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" %>

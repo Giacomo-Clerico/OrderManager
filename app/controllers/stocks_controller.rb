@@ -59,6 +59,36 @@ class StocksController < ApplicationController
       filename: "stocks_#{Time.now.strftime('%Y%m%d%H%M%S')}.json"
   end
 
+  def import_json
+    file = params[:file]
+    if file.nil?
+      redirect_to stocks_path, alert: "Please upload a JSON file."
+      return
+    end
+
+    begin
+      data = JSON.parse(file.read)
+
+      data.each do |stock_data|
+        product = Product.find_by(code: stock_data["product_code"])
+        storage = Storage.find_by(abbreviation: stock_data["storage"])
+        next unless product && storage
+
+        Stock.create!(
+          product_id: product.id,
+          storage_id: storage.id,
+          storage_type: storage.class.name,
+          location: stock_data["location"],
+          quantity: stock_data["quantity"]
+        )
+      end
+
+      redirect_to stocks_path, notice: "Stock data imported successfully."
+    rescue => e
+      redirect_to stocks_path, alert: "Import failed: #{e.message}"
+    end
+  end
+
   private
   def stock_params
     params.require(:stock).permit(:product_id, :storage_id, :storage_type, :quantity)

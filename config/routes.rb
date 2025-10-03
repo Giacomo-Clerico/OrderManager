@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   resources :stocks do
     collection do
       get :export_json
+      post :import_json
     end
   end
   resources :manual_entries
