@@ -61,6 +61,48 @@ class ProductsController < ApplicationController
     redirect_to products_path, notice: "Product deleted successfully."
   end
 
+  def export_json
+    products = Product.all.map do |product|
+      {
+        category: product.category,
+        code: product.code,
+        desctription: product.desctription.to_plain_text, # assuming rich text
+        product_type: product.product_type
+      }
+    end
+
+    send_data products.to_json,
+      type: "application/json; header=present",
+      disposition: "attachment",
+      filename: "products_#{Time.now.strftime('%Y%m%d%H%M%S')}.json"
+  end
+
+  def import_json
+    file = params[:file]
+    if file.nil?
+      redirect_to products_path, alert: "Please upload a JSON file."
+      return
+    end
+
+    begin
+      data = JSON.parse(file.read)
+
+      data.each do |product_data|
+        Product.create!(
+          category: product_data["category"],
+          code: product_data["code"],
+          desctription: product_data["desctription"], # ActionText will handle it
+          product_type: product_data["product_type"]
+        )
+      end
+
+      redirect_to products_path, notice: "Product data imported successfully."
+    rescue => e
+      redirect_to products_path, alert: "Import failed: #{e.message}"
+    end
+  end
+
+
   private
   def set_product
     @product = Product.find(params[:id])

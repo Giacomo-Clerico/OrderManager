@@ -17,7 +17,12 @@ Rails.application.routes.draw do
       post :check_order
     end
   end
-  resources :products
+  resources :products do
+    collection do
+      get :export_json
+      post :import_json
+    end
+  end
   resources :storages
   resources :stocks do
     collection do
