@@ -19,7 +19,11 @@ Rails.application.routes.draw do
   end
   resources :products
   resources :storages
-  resources :stocks
+  resources :stocks do
+    collection do
+      get :export_json
+    end
+  end
   resources :manual_entries
   resources :orders do
     member do

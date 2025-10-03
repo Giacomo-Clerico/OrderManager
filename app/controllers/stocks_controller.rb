@@ -42,6 +42,23 @@ class StocksController < ApplicationController
     @stock.destroy
     redirect_to stocks_path, notice: "Stock was successfully destroyed."
   end
+
+  def export_json
+    stocks = Stock.all.map do |stock|
+      {
+        product_code: stock.product&.code,
+        storage: stock.storage&.abbreviation,
+        location: stock.location,
+        quantity: stock.quantity
+      }
+    end
+
+    send_data stocks.to_json,
+      type: "application/json; header=present",
+      disposition: "attachment",
+      filename: "stocks_#{Time.now.strftime('%Y%m%d%H%M%S')}.json"
+  end
+
   private
   def stock_params
     params.require(:stock).permit(:product_id, :storage_id, :storage_type, :quantity)
