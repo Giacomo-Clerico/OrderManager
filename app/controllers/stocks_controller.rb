@@ -72,6 +72,10 @@ class StocksController < ApplicationController
       data.each do |stock_data|
         product = Product.find_by(code: stock_data["product_code"])
         storage = Storage.find_by(abbreviation: stock_data["storage"])
+        unless product && storage
+          Rails.logger.warn "Skipping stock entry: Product or Storage not found for #{stock_data}"
+          next
+        end
         next unless product && storage
 
         Stock.create!(
