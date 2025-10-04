@@ -37,11 +37,27 @@ class ProductsController < ApplicationController
   def create
     @product = Product.new(product_params)
     if @product.save
+      initial_quantity = initial_stock_quantity_param.to_i
+      if initial_quantity > 0
+        # Assuming a default storage and storage_type must be known here; replace with actual values
+        default_storage = Storage.first # or another default logic
+        if default_storage
+          Stock.add!(
+            product_id: @product.id,
+            storage_id: default_storage.id,
+            storage_type: default_storage.class.name,
+            quantity: initial_quantity,
+            location: nil # or set default location string
+          )
+        end
+      end
       redirect_to products_path, notice: "Product created successfully."
     else
+      @categories = Product::CATEGORIES
       render :new
     end
   end
+
 
   def edit
     @categories = Product::CATEGORIES
@@ -116,5 +132,9 @@ class ProductsController < ApplicationController
     unless %w[manager director].include?(current_user.user_type)
       redirect_to root_path, alert: "You are not authorized to create, modify or delete products."
     end
+  end
+
+  def initial_stock_quantity_param
+    params[:initial_stock_quantity]
   end
 end
