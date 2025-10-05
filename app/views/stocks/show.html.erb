@@ -30,6 +30,11 @@
     </p>
 
     <p>
+        <span class="font-semibold">Location:</span>
+        <%= @stock.location %>
+    </p>
+
+    <p>
         <span class="font-semibold">Storage:</span>
         <% if @stock.storage.present? %>
         <%= @stock.storage.try(:name) || "##{@stock.storage_id}" %>
