@@ -1,7 +1,7 @@
 class ProductsController < ApplicationController
   before_action :set_product, only: [ :edit, :update, :destroy, :show ]
   before_action :authenticate_user!
-  before_action :require_manager_or_director, except: [ :index ]
+  before_action :require_manager_or_director, except: [ :index, :show ]
 
   def index
     @types = Product.distinct.pluck(:product_type)

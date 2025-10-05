@@ -1,4 +1,6 @@
 class ManualEntriesController < ApplicationController
+  before_action :authenticate_user!
+  before_action :require_manager_or_director, except: [ :index ]
   def new
     @manual_entry = ManualEntry.new
   end
@@ -47,5 +49,11 @@ class ManualEntriesController < ApplicationController
 
   def manual_entry_params
     params.require(:manual_entry).permit(:product_id, :storage_id, :storage_type, :location, :quantity)
+  end
+
+  def require_manager_or_director
+    unless %w[manager director].include?(current_user.user_type)
+      redirect_to root_path, alert: "You are not authorized to create, modify or delete products."
+    end
   end
 end
