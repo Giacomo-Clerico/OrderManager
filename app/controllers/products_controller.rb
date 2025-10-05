@@ -36,12 +36,30 @@ class ProductsController < ApplicationController
 
   def create
     @product = Product.new(product_params)
+    initial_quantity = initial_stock_params[:initial_stock_quantity].to_i
+    initial_storage_id = initial_stock_params[:initial_storage_id]
+    initial_location = initial_stock_params[:initial_location]
+    initial_storage_type = initial_stock_params[:initial_storage_type]
+    Rails.logger.debug "initial_quantity: #{initial_quantity.inspect}"
+    Rails.logger.debug "initial_storage_id: #{initial_storage_id.inspect}"
+    Rails.logger.debug "initial_storage_type: #{initial_storage_type.inspect}"
     if @product.save
+      if initial_quantity > 0
+        Stock.add!(
+          product_id: @product.id,
+          storage_id: initial_storage_id,
+          storage_type: initial_storage_type,
+          quantity: initial_quantity,
+          location: initial_location
+        )
+      end
       redirect_to products_path, notice: "Product created successfully."
     else
+      @categories = Product::CATEGORIES
       render :new
     end
   end
+
 
   def edit
     @categories = Product::CATEGORIES
@@ -116,5 +134,9 @@ class ProductsController < ApplicationController
     unless %w[manager director].include?(current_user.user_type)
       redirect_to root_path, alert: "You are not authorized to create, modify or delete products."
     end
+  end
+
+  def initial_stock_params
+    params.permit(:initial_stock_quantity, :initial_location, :initial_storage_id, :initial_storage_type)
   end
 end
