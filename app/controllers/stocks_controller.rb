@@ -94,6 +94,9 @@ class StocksController < ApplicationController
   end
 
   private
+  ##
+  # Filter and permit permitted attributes for a stock from request parameters.
+  # @return [ActionController::Parameters] Parameters containing only `:product_id`, `:storage_id`, `:storage_type`, `:quantity`, and `:location` for mass assignment.
   def stock_params
     params.require(:stock).permit(:product_id, :storage_id, :storage_type, :quantity, :location)
   end

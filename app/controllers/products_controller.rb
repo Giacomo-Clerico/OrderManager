@@ -34,6 +34,9 @@ class ProductsController < ApplicationController
     @categories = Product::CATEGORIES
   end
 
+  ##
+  # Creates a new Product from submitted parameters and, if specified, adds an initial Stock entry.
+  # If the product saves and the provided initial stock quantity is greater than zero, creates a Stock record using the submitted storage id, storage type, quantity, and location, then redirects to the products list with a success notice. If saving fails, assigns category options and re-renders the new template.
   def create
     @product = Product.new(product_params)
     initial_quantity = initial_stock_params[:initial_stock_quantity].to_i
@@ -61,6 +64,9 @@ class ProductsController < ApplicationController
   end
 
 
+  ##
+  # Prepares category options for the edit view.
+  # Assigns Product::CATEGORIES to @categories for use by the edit template.
   def edit
     @categories = Product::CATEGORIES
   end
@@ -130,12 +136,18 @@ class ProductsController < ApplicationController
     params.require(:product).permit(:category, :code, :desctription, :product_type)
   end
 
+  ##
+  # Restricts access to actions to users with user_type "manager" or "director".
+  # If the current user is not a manager or director, redirects to `root_path` with the alert "You are not authorized to create, modify or delete products."
   def require_manager_or_director
     unless %w[manager director].include?(current_user.user_type)
       redirect_to root_path, alert: "You are not authorized to create, modify or delete products."
     end
   end
 
+  ##
+  # Permit and return initial stock-related parameters from the request.
+  # @return [ActionController::Parameters] Parameters containing permitted keys: `:initial_stock_quantity`, `:initial_location`, `:initial_storage_id`, and `:initial_storage_type`.
   def initial_stock_params
     params.permit(:initial_stock_quantity, :initial_location, :initial_storage_id, :initial_storage_type)
   end
