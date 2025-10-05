@@ -36,23 +36,22 @@ class ProductsController < ApplicationController
 
   def create
     @product = Product.new(product_params)
+    initial_quantity = initial_stock_params[:initial_stock_quantity].to_i
+    initial_storage_id = initial_stock_params[:initial_storage_id]
+    initial_location = initial_stock_params[:initial_location]
+    initial_storage_type = initial_stock_params[:initial_storage_type]
+    Rails.logger.debug "initial_quantity: #{initial_quantity.inspect}"
+    Rails.logger.debug "initial_storage_id: #{initial_storage_id.inspect}"
+    Rails.logger.debug "initial_storage_type: #{initial_storage_type.inspect}"
     if @product.save
-      initial_quantity = initial_stock_params[:initial_quantity]
-      initial_storage_id = initial_stock_params[:initial_storage_id]
-      initial_location = initial_stock_params[:initial_location]
-      initial_storage_type = initial_stock_params[:initial_storage_type]
       if initial_quantity > 0
-        # Assuming a default storage and storage_type must be known here; replace with actual values
-        default_storage = Storage.first # or another default logic
-        if default_storage
-          Stock.add!(
-            product_id: @product.id,
-            storage_id: initial_storage_id,
-            storage_type: initial_storage_type,
-            quantity: initial_quantity,
-            location: initial_location # or set default location string
-          )
-        end
+        Stock.add!(
+          product_id: @product.id,
+          storage_id: initial_storage_id,
+          storage_type: initial_storage_type,
+          quantity: initial_quantity,
+          location: initial_location
+        )
       end
       redirect_to products_path, notice: "Product created successfully."
     else
@@ -138,6 +137,6 @@ class ProductsController < ApplicationController
   end
 
   def initial_stock_params
-    params[:initial_stock_quantity, :initial_location, :initial_storage_id, :initial_storage_type]
+    params.permit(:initial_stock_quantity, :initial_location, :initial_storage_id, :initial_storage_type)
   end
 end
