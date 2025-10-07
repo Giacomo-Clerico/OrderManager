@@ -672,7 +672,6 @@ gem "image_processing", "~> 1.2"
 
 
 group :development, :test do
-
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
 
 
@@ -834,7 +833,6 @@ group :development, :test do
 
 
   gem "rubocop-rails-omakase", require: false
-
 end
 
 
@@ -868,7 +866,6 @@ end
 
 
 group :development do
-
   # Use console on exceptions pages [https://github.com/rails/web-console]
 
 
@@ -886,7 +883,6 @@ group :development do
 
 
   gem "web-console"
-
 end
 
 
@@ -912,7 +908,6 @@ end
 
 
 group :test do
-
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
 
 
@@ -946,7 +941,6 @@ group :test do
 
 
   gem "selenium-webdriver"
-
 end
 
 
@@ -1023,3 +1017,6 @@ gem "whenever"
 
 
 gem "redcarpet"
+
+
+gem "rexml", ">= 3.4.2"
