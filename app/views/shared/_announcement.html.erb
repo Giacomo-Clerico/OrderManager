@@ -1,0 +1,37 @@
+<% if @announcement_html.present? %>
+<div id="site-announcement"
+    class="relative mb-4 rounded-lg border border-yellow-300 bg-yellow-50 p-4 pr-12 text-yellow-800 shadow">
+    
+    <!-- Close Button -->
+    <button id="dismiss-announcement"
+        type="button"
+        class="absolute top-2 right-2 rounded p-2 text-yellow-600 hover:bg-yellow-200 hover:text-yellow-900 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+        aria-label="Dismiss">
+        &times;
+    </button>
+
+    <!-- Announcement Content -->
+    <div class="prose prose-sm max-w-none">
+        <%= @announcement_html.html_safe %>
+    </div>
+</div>
+<% end %>
+<script>
+document.addEventListener("turbo:load", function() {
+    var key = "announcement_dismissed_at";
+    var banner = document.getElementById("site-announcement");
+    var dismissBtn = document.getElementById("dismiss-announcement");
+    if (!banner) return;
+
+    var stored = localStorage.getItem(key);
+    var today = new Date().toISOString().slice(0, 10);
+    if (stored === today) {
+    banner.style.display = "none";
+    }
+
+    dismissBtn.addEventListener("click", function() {
+    localStorage.setItem(key, today);
+    banner.style.display = "none";
+    });
+});
+</script>
