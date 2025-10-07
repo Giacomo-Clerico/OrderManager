@@ -1,0 +1,2 @@
+15 0 * * * /backup.sh >> /var/log/backup.log 2>&1
+15 12 * * * /backup.sh >> /var/log/backup.log 2>&1

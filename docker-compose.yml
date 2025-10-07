@@ -32,6 +32,23 @@ services:
     ports:
       - "3000:3000"
 
+  backup:
+    build:
+      context: ./db-backup
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - TZ=Africa/Lusaka
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      - db
+
 volumes:
   postgres_data: {}
   app-storage: {}
