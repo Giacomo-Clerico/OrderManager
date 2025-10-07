@@ -23,6 +23,18 @@
     <%= stylesheet_link_tag "actiontext", "data-turbo-track": "reload" %>
     <%#= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <script>
+      (function() {
+        var stored = localStorage.getItem("announcement_dismissed_at");
+        var today = new Date().toISOString().slice(0, 10);
+        if (stored === today) {
+          var style = document.createElement("style");
+          style.innerHTML = "#site-announcement { display: none !important; }";
+          document.head.appendChild(style);
+        }
+      })();
+    </script>
+
   </head>
 
   <body class="px-3">
@@ -38,6 +50,7 @@
           <%= link_to "Storages", storages_path, class: "text-blue-600 hover:underline" %>
         </h1>
       </div>
+      <%= render 'shared/announcement' %>
       <% unless controller_name == "sessions" && action_name == "new" %>
       
         <div class="flex justify-between items-center gap-3 px-2">
