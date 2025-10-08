@@ -111,6 +111,12 @@ jobs:
       - name: Make rails executable
         run: chmod +x bin/rails
 
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            sleep 1
+          done
+      
       - name: Prepare Database
         run: bin/rails db:migrate
 
