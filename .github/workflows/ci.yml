@@ -111,6 +111,9 @@ jobs:
       - name: Make rails executable
         run: chmod +x bin/rails
 
+      - name: Prepare Database
+        run: bin/rails db:migrate
+
       - name: Run tests
         env:
           RAILS_ENV: test
