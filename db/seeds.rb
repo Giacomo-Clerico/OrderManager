@@ -8,4 +8,4 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-User.create(email:"director@mutanda.com", password:"password", user_type: "director")
+User.create(email: "director@mutanda.com", password: "password", user_type: "director")
