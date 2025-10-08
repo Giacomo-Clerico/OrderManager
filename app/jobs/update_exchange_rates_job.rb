@@ -5,5 +5,4 @@ class UpdateExchangeRatesJob < ApplicationJob
     rates = CurrencyExchangeService.fetch_rates
     Rails.cache.write("latest_exchange_rates", rates, expires_in: 1.hour)
   end
-  
 end
