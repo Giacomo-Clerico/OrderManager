@@ -3,27 +3,11 @@ class ApplicationController < ActionController::Base
 
 
 
-
-
-
-
-
   allow_browser versions: { all: true } do
     true
   end
 
-
-
   before_action :authenticate_user!, unless: -> { request.path == new_user_session_path }
-  before_action :load_announcement
-
-
-
-
-
-
-
-
 
 
 
@@ -35,23 +19,7 @@ class ApplicationController < ActionController::Base
 
 
 
-
-
-
-
   stale_when_importmap_changes
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -68,28 +36,6 @@ class ApplicationController < ActionController::Base
 
 
 
-  def load_announcement
-    path = Rails.root.join("public", "announcement.txt")
-    if File.exist?(path)
-      @announcement_raw = File.read(path).strip
-      if @announcement_raw.present?
-        renderer = Redcarpet::Render::HTML.new(filter_html: true, hard_wrap: true)
-        markdown = Redcarpet::Markdown.new(renderer, extensions = {})
-        @announcement_html = markdown.render(@announcement_raw).html_safe
-      else
-        @announcement_html = nil
-      end
-    else
-      @announcement_html = nil
-    end
-  end
-
-
-
-
-
-
-
 
 
 
@@ -98,15 +44,7 @@ class ApplicationController < ActionController::Base
 
 
 
-
-
-
-
       unless
-
-
-
-
 
 
 
@@ -114,15 +52,7 @@ class ApplicationController < ActionController::Base
 
 
 
-
-
-
-
       end
-
-
-
-
 
 
 
