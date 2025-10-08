@@ -123,6 +123,9 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Make rails executable
+        run: chmod +x bin/rails
+        
       - name: Run System Tests
         env:
           RAILS_ENV: test
