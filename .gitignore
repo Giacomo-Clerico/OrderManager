@@ -36,3 +36,6 @@
 
 # Ignore sync utility files
 sync.ffs_db
+
+# Ignore database backups
+/backups/*
