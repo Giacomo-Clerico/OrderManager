@@ -27,7 +27,6 @@ services:
       - EXCHANGE_RATE_API_KEY=${EXCHANGE_RATE_API_KEY}
     volumes:
       - app-storage:/rails/storage
-      - ./public:/rails/public
     depends_on:
       - db
     ports:

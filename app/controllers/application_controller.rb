@@ -70,14 +70,18 @@ class ApplicationController < ActionController::Base
 
   def load_announcement
     path = Rails.root.join("public", "announcement.txt")
-    return @announcement_html = nil unless File.exist?(path)
-
-    raw_content = File.read(path).strip
-    return @announcement_html = nil if raw_content.blank?
-
-    renderer = Redcarpet::Render::HTML.new(filter_html: true, hard_wrap: true)
-    markdown = Redcarpet::Markdown.new(renderer, extensions = {})
-    @announcement_html = markdown.render(raw_content).html_safe
+    if File.exist?(path)
+      @announcement_raw = File.read(path).strip
+      if @announcement_raw.present?
+        renderer = Redcarpet::Render::HTML.new(filter_html: true, hard_wrap: true)
+        markdown = Redcarpet::Markdown.new(renderer, extensions = {})
+        @announcement_html = markdown.render(@announcement_raw).html_safe
+      else
+        @announcement_html = nil
+      end
+    else
+      @announcement_html = nil
+    end
   end
 
 
