@@ -4,12 +4,12 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one:
-  body: "Sample comment"
-  order_id: orders(:one).id
+# one:
+#   body: "Sample comment"
+#   order_id: orders(:one).id
 # column: value
 #
-two:
-  body: "Sample comment 2"
-  order_id: orders(:two).id
+# two:
+#   body: "Sample comment 2"
+#   order_id: orders(:two).id
 # column: value
