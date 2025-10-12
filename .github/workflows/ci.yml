@@ -118,6 +118,11 @@ jobs:
           done
       
       - name: Prepare Database
+        env:
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: test
         run: bin/rails db:migrate
 
       - name: Run tests
