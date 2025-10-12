@@ -3,11 +3,11 @@
 one:
   name: MyText
   description: MyText
-  author: 1
+  user: 1
   time: 2025-08-14 10:45:03
 
 two:
   name: MyText
   description: MyText
-  author: 1
+  user: 1
   time: 2025-08-14 10:45:03
