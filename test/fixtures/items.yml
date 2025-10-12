@@ -2,10 +2,10 @@
 
 one:
   quote: one
-  item_name: MyText
+  product_id: one
   price: 1
 
 two:
   quote: two
-  item_name: MyText
+  product_id: two
   price: 1
