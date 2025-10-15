@@ -39,3 +39,6 @@ sync.ffs_db
 
 # Ignore database backups
 /backups/*
+
+# Ignore users file for Dozzle
+/data/users.yml
