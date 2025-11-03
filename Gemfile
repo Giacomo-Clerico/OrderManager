@@ -75,7 +75,7 @@ end
 gem "pg"
 gem "devise", "~> 4.9"
 gem "dotenv-rails", "~> 3.1"
-gem "tailwindcss-rails", "~> 4.3"
+gem "tailwindcss-rails", "~> 4.4"
 gem "whenever"
 gem "redcarpet"
 gem "rexml", ">= 3.4.2"
