@@ -35,13 +35,13 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libyaml-dev libpq-dev pkg-config nodejs npm yarn && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Install application gems
-COPY Gemfile Gemfile.lock vendor ./
 
+# Install application gems
+COPY Gemfile Gemfile.lock ./
 RUN gem install bundler && \
-    mkdir -p $BUNDLE_PATH && \
     bundle config set --global git_clone_options "" && \
-    bundle install
+    bundle install && \
+    rm -rf vendor/bundle/ruby/*/cache "${BUNDLE_PATH}"/bundler/gems/*/.git || true
 
 #RUN bundle install && \
 #    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
