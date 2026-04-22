@@ -76,6 +76,13 @@ USER 1000:1000
 COPY --chown=rails:rails --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --chown=rails:rails --from=build /rails /rails
 
+USER root
+RUN bundle config set --local path /gems && \
+    bundle config set --local deployment true && \
+    bundle exec bundle platform --add-to-lockfile  # Ensures lockfile platforms match
+USER 1000:1000
+
+
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
