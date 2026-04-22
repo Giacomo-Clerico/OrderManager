@@ -78,8 +78,7 @@ COPY --chown=rails:rails --from=build /rails /rails
 
 USER root
 RUN bundle config set --local path /gems && \
-    bundle config set --local deployment true && \
-    bundle exec bundle platform --add-to-lockfile  # Ensures lockfile platforms match
+    bundle config set --local deployment true
 USER 1000:1000
 
 
